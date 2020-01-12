@@ -1,0 +1,117 @@
+%% LyX 2.3.3 created this file.  For more info, see http://www.lyx.org/.
+%% Do not edit unless you really know what you are doing.
+\documentclass[11pt]{article}
+\usepackage[latin9]{inputenc}
+\usepackage{url}
+\usepackage{amsmath}
+
+\makeatletter
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% User specified LaTeX commands.
+%Gummi|065|=)
+\usepackage{url}
+\title{\textbf{Capstone Proposal}}
+\author{Allyson Julian}
+\date{December 30, 2019}
+
+\makeatother
+
+\begin{document}
+\maketitle
+
+\section{Introduction}
+
+Advances in agricultural technology over the past 30 years have made
+it easier for farmers to manage their farms, particularly when the
+farms are comprised of multiple fields greater than 1000 acres in
+size. The use of GPS on aerial imagery, drones, etc. have been instrumental
+in precision agriculture\cite{liakos_machine_2018}.
+
+But one of the challenges of modern farming is the detection of plant
+diseases. For large farms in particular, it is time-consuming for
+a farmer to manually check each growing plant for disease. It can
+potentially be more cost-effective to diagnose plant diseases with
+automated tools \cite{fujita_basic_2016}.
+
+\section{Problem Statement}
+
+Farmers need a way to detect plant disease early on in the planting
+season without investing too much time manually checking everything
+themselves. 
+
+They need software and hardware tools to do plant disease
+detection at scale to be more cost-effective in the planting process.
+In other words, there must be a classifier built that can process
+an image of a plant and detect whether a plant is diseased or not and what
+disease it has.
+
+Access to reliable cellular and/or wifi data is often limited in rural areas,
+so any kind of tool for this problem area must also be able to run offline on cheap
+embedded systems built specifically for machine learning, e.g. NVIDIA's Jetson Nano: 
+
+\url{https://developer.nvidia.com/embedded/jetson-nano-developer-kit}
+
+\section{Dataset and Input}
+
+The main dataset used for training and validation will be the PlantVillage
+Dataset obtained from GitHub:
+
+\url{https://github.com/spMohanty/PlantVillage-Dataset}
+
+The dataset consists of 20,638 images each of which have the dimensions
+256 by 256 pixels and are all colored, non-greyscale JPEGs. The images
+are split up into several folders, labelled according to the plant
+species (e.g. Pepper Bell) and whether they are healthy or not (e.g.
+Pepper bell healthy, Pepper bell Bacterial spot).
+
+\section{Solution Statement}
+
+To address the need for a plant disease detecting tool, I will be
+building a Python library with an API that will have two major functions:
+image preprocessing necessary to prepare the data for classification,
+and the classifier itself. This solution is based on the work done in some previous studies \cite{tripathi_recent_2016}\cite{sladojevic_deep_2016}.
+
+The classifier will be built with using a Convolutional Neural Network (CNN)
+with TensorFlow. This model will be based on the CNNs described in previous studies \cite{fuentes_robust_2017}\cite{toda_how_2019}.
+
+The library will be used in a web app that will act as a UI
+for the trained classifier using the Flask framework. It will allow
+the user to upload photos to be preprocessed in the backend and 
+then sent to the endpoint for classification.
+
+A functioning prototype of the plant disease detector will be built 
+using a Jetson Nano robot equipped with a camera. This will act as a proof-of-concept as to what
+can be achieved using open source machine learning and cheap embedded systems.
+
+\section{Benchmark Model}
+
+The benchmark for the classifier will be the results obtained by previous studies by
+Toda et al, Fuentes et al, on plant detection which all utilize a CNN as a classifier\cite{toda_how_2019} \cite{fuentes_robust_2017}.
+
+\section{Evaluation Metrics}
+
+The metrics used to evaluate the performance of the model will be
+the accuracy of the model when it comes to the predicted classes vs
+the actual ones, confusion matrix, and F-score.
+
+\section{Project Design}
+
+\subsection{Preprocessing Data}
+
+The images will be preprocessed according to methodologies similar to those described in previous studies\cite{al_hiary_fast_2011}\cite{toda_how_2019}\cite{fuentes_robust_2017}: (1) color transformation of the RGB values in the image, (2) masking of the non-diseased parts of the leaf.
+
+\subsection{Training Model}
+
+The plant disease classifier will be built using TensorFlow, with
+the model being a Convolutional Neural Network (CNN) trained on the
+image dataset of 256x256 images in the PlantVillage dataset. This type of model was chosen
+because CNNs have shown promising results in disease classification
+in previous studies on this topic\cite{sladojevic_deep_2016}\cite{toda_how_2019}.
+
+\subsection{Deployment}
+
+The trained model will be imported into AWS SageMaker so that it can be deployed as an endpoint. The Flask web app will act as a front-end for that endpoint. It will have an upload screen to allow the user to submit a photo of a plant leaf and determine what disease it has, if any.
+
+\bibliographystyle{IEEEtran}
+\bibliography{citations}
+
+\end{document}
