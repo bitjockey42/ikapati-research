@@ -59,13 +59,18 @@ Project Organization
 Setup
 --------
 
-This
-
 
 With conda, you can install from the `environment.yml` file:
 
 ```
 conda env create --file environment.yml
+```
+
+Then install requirements:
+
+```
+conda install pip
+pip install -r requirements.txt
 ```
 
 These environment variables need to be set:
@@ -90,4 +95,12 @@ conda activate ikapati
 
 # Look at list of set env vars
 conda env config vars list
+```
+
+Running
+----------
+
+```
+python src/data/make_dataset.py data/fashion_test
+python src/models/train_model.py --epochs 20 --batch_size 64 --model_dir models --train data/fashion_test
 ```
