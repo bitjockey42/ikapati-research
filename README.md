@@ -55,3 +55,39 @@ Project Organization
 --------
 
 <p><small>Project based on the <a target="_blank" href="https://drivendata.github.io/cookiecutter-data-science/">cookiecutter data science project template</a>. #cookiecutterdatascience</small></p>
+
+Setup
+--------
+
+This
+
+
+With conda, you can install from the `environment.yml` file:
+
+```
+conda env create --file environment.yml
+```
+
+These environment variables need to be set:
+
+```
+SM_HOSTS=["algo-1","algo-2"]
+CUDA_VISIBLE_DEVICES=0
+```
+
+To set these inside the conda env:
+
+```
+# Make sure you're in the env
+conda activate ikapati
+
+# Set vars
+conda env config vars set CUDA_VISIBLE_DEVICES=0
+conda env config vars set SM_HOSTS='["algo-1","algo-2"]'
+
+# Re-activate env to load new variables
+conda activate ikapati
+
+# Look at list of set env vars
+conda env config vars list
+```
