@@ -2,8 +2,12 @@
 import click
 import os
 import logging
+import glob
+import random
+
 from pathlib import Path
 from dotenv import find_dotenv, load_dotenv
+from PIL import Image
 
 import numpy as np
 from tensorflow import keras
@@ -56,6 +60,11 @@ def get_classes(labels):
     return np.unique(labels)
 
 
+def convert_to_one_hot_labels(labels, num_classes):
+    """ Convert labels (e.g. "2") to one hot encoding (e.g [0, 0, 1])"""
+    return keras.utils.to_categorical(labels, num_classes=num_classes)
+
+
 def preprocess_images(images):
     """ Scale the values of the images to a range of 0 to 1 before feeding into CNN """
     # reshape each image from 28,28 to a 28,28,1
@@ -66,9 +75,51 @@ def preprocess_images(images):
     return preprocessed_images / 255
 
 
-def convert_to_one_hot_labels(labels, num_classes):
-    """ Convert labels (e.g. "2") to one hot encoding (e.g [0, 0, 1])"""
-    return keras.utils.to_categorical(labels, num_classes=num_classes)
+def preprocess_image(filename, normalize, standardize):
+    image = load_image(filename)
+    pixel_values = convert_to_pixel_values(image, normalize, standardize)
+    pixel_values.reshape(-1, image.size[0], image.size[1], 1)
+    return pixel_values
+
+
+def load_image(filename):
+    """ Load image and optionaly split into different channels """
+    image = Image.open(filename)
+    print(f"LOADED {filename}\n{image.format} {image.mode} {image.size}")
+    return image
+
+
+def convert_to_pixel_values(image, normalize, standardize):
+    """ Convert image to array of pixel values """
+    pixels = np.asarray(image)
+    if normalize:
+        pixels = normalize_pixel_values(pixels)
+    if standardize:
+        pixels = standardize_pixel_values(pixels)
+    return pixels
+
+
+def normalize_pixel_values(pixels):
+    """ Normalize pixel values to be in the range [0, 1] """
+    print('Data Type: %s' % pixels.dtype)
+    print('BEFORE NORMALIZATION Min: %.3f, Max: %.3f' % (pixels.min(), pixels.max()))
+    pixels = pixels.astype('float32')
+    pixels /= 255.0
+    print('AFTER NORMALIZATION Min: %.3f, Max: %.3f' % (pixels.min(), pixels.max()))
+    return pixels
+
+
+def standardize_pixel_values(pixels):
+    """ Globally standardize pixel values to positive """
+    mean, std = pixels.mean(), pixels.std()
+    print('BEFORE STANDARDIZATION Mean: %.3f, Standard Deviation: %.3f' % (mean, std))
+    pixels = (pixels - mean) / std
+    pixels = np.clip(pixels, -1.0, 1.0)
+    pixels = (pixels + 1.0) / 2.0
+    mean, std = pixels.mean(), pixels.std()
+    print('AFTER STANDARDIZATION Mean: %.3f, Standard Deviation: %.3f' % (mean, std))
+    print('AFTER STANDARDIZATION Min: %.3f, Max: %.3f' % (pixels.min(), pixels.max()))
+    return pixels
 
 
 def save_dataset(data_dir, dataset):
