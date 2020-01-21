@@ -30,6 +30,10 @@ def download_dataset():
     }
 
 
+def find_image_files(data_dir, file_ext="JPG"):
+    return glob.glob(os.path.join(data_dir, f"*.{file_ext}"))
+
+
 def prepare_dataset(dataset):
     """ Prepare the dataset for saving """
     logger.info('preparing dataset')
@@ -55,6 +59,11 @@ def prepare_dataset(dataset):
     }
 
 
+def prepare_labels():
+    # TODO: Add species and disease type columns to each leaf maps CSV
+    pass
+
+
 def get_classes(labels):
     """ Get the classes """
     return np.unique(labels)
@@ -66,13 +75,8 @@ def convert_to_one_hot_labels(labels, num_classes):
 
 
 def preprocess_images(images):
-    """ Scale the values of the images to a range of 0 to 1 before feeding into CNN """
-    # reshape each image from 28,28 to a 28,28,1
-    logger.info('preprocessing images')
-    preprocessed_images = images.reshape(-1, 28,28, 1)
-    # convert type to float32
-    preprocessed_images = preprocessed_images.astype('float32')
-    return preprocessed_images / 255
+    """ Load and preprocess images before feeding into CNN """
+    pass
 
 
 def preprocess_image(filename, normalize, standardize):
@@ -85,7 +89,7 @@ def preprocess_image(filename, normalize, standardize):
 def load_image(filename):
     """ Load image and optionaly split into different channels """
     image = Image.open(filename)
-    print(f"LOADED {filename}\n{image.format} {image.mode} {image.size}")
+    logger.info(f"LOADED {filename}\n{image.format} {image.mode} {image.size}")
     return image
 
 
