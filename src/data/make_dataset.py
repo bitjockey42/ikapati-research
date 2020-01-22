@@ -124,24 +124,17 @@ def convert_to_pixel_values(image, normalize, standardize):
 
 def normalize_pixel_values(pixels):
     """ Normalize pixel values to be in the range [0, 1] """
-    print('Data Type: %s' % pixels.dtype)
-    print('BEFORE NORMALIZATION Min: %.3f, Max: %.3f' % (pixels.min(), pixels.max()))
     pixels = pixels.astype('float32')
     pixels /= 255.0
-    print('AFTER NORMALIZATION Min: %.3f, Max: %.3f' % (pixels.min(), pixels.max()))
     return pixels
 
 
 def standardize_pixel_values(pixels):
     """ Globally standardize pixel values to positive """
     mean, std = pixels.mean(), pixels.std()
-    print('BEFORE STANDARDIZATION Mean: %.3f, Standard Deviation: %.3f' % (mean, std))
     pixels = (pixels - mean) / std
     pixels = np.clip(pixels, -1.0, 1.0)
     pixels = (pixels + 1.0) / 2.0
-    mean, std = pixels.mean(), pixels.std()
-    print('AFTER STANDARDIZATION Mean: %.3f, Standard Deviation: %.3f' % (mean, std))
-    print('AFTER STANDARDIZATION Min: %.3f, Max: %.3f' % (pixels.min(), pixels.max()))
     return pixels
 
 
