@@ -111,4 +111,6 @@ if __name__ == "__main__":
     classifier.fit(train_data, train_labels, batch_size=args.batch_size, epochs=args.epochs, validation_data=(eval_data, eval_labels))
 
     # save model
-    classifier.save(os.path.join(args.model_dir, '000000001'), 'model.h5')
+
+    model_filepath = os.path.join(args.model_dir, "{0}.h5".format(str(uuid4())))
+    classifier.save(model_filepath)
