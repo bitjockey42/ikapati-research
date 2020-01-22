@@ -17,7 +17,7 @@ from sklearn.model_selection import train_test_split
 logger = logging.getLogger(__name__)
 
 
-def prepare_dataset(data_dir, species, file_ext="JPG"):
+def prepare_dataset(data_dir, species=None, file_ext="JPG"):
     """ Prepare the dataset for saving """
     logger.info(f"preparing dataset for {species}")
 
@@ -61,8 +61,10 @@ def prepare_dataset(data_dir, species, file_ext="JPG"):
     }
 
 
-def get_folder_paths(data_dir, species):
-    return sorted(glob.glob(os.path.join(data_dir, f"{species}*/")))
+def get_folder_paths(data_dir, species=None):
+    if species:
+        return sorted(glob.glob(os.path.join(data_dir, f"{species}*/")))
+    return sorted(os.listdir(data_dir))
 
 
 def get_species_disease(folder_path):
@@ -157,14 +159,15 @@ def save_dataset(project_dir, dataset):
 
 @click.command()
 @click.argument('data_dir', type=click.Path())
+@click.argument('output_dir', type=click.Path())
 @click.option('--species', help='The name of the plant species, e.g. Corn')
-@click.option('--file-ext', help='The file extension of images, e.g. JPG')
-def main(data_dir, species):
+@click.option('--file-ext', default="JPG", help='The file extension of images, e.g. JPG')
+def main(data_dir, output_dir, species, file_ext):
     """ Runs data processing scripts to turn raw data from (../raw) into
         cleaned data ready to be analyzed (saved in ../processed).
     """
     logger.info('making final data set from raw data')
-    dataset = prepare_dataset(data_dir, species)
+    dataset = prepare_dataset(data_dir, species, file_ext)
     save_dataset(project_dir, dataset)
 
 
