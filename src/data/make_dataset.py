@@ -27,6 +27,7 @@ def prepare_dataset(data_dir, species, file_ext="JPG"):
         "Species": [],
         "Filename": [],
         "Disease": [],
+        "Label": [],
     }
 
     folder_paths = get_folder_paths(data_dir, species)
@@ -38,6 +39,7 @@ def prepare_dataset(data_dir, species, file_ext="JPG"):
             data["Species"].append(species)
             data["Disease"].append(disease)
             data["Filename"].append(os.path.basename(filename))
+            data["Label"].append(label_id)
             labels.append(label_id)
             preprocessed_image = preprocess_image(filename)
             preprocessed_images.append(preprocessed_image)
@@ -141,27 +143,29 @@ def standardize_pixel_values(pixels):
     return pixels
 
 
-def save_dataset(data_dir, dataset):
+def save_dataset(project_dir, dataset):
     """ Save dataset as *.npy to """
-    if not os.path.isdir(data_dir):
-        os.makedirs(data_dir)
+    output_dir = os.path.join(project_dir, "data", "processed")
+    if not os.path.isdir(output_dir):
+        os.makedirs(output_dir)
 
     for key, data in dataset.items():
-        file_path = os.path.join(data_dir, f"{key}.npy")
+        file_path = os.path.join(output_dir, f"{key}.npy")
         logger.info(f"Saving {key} to {file_path}")
-        np.save(file_path, dataset[key])
+        np.save(file_path, data)
 
 
 @click.command()
 @click.argument('data_dir', type=click.Path())
-def main(data_dir):
+@click.option('--species', help='The name of the plant species, e.g. Corn')
+@click.option('--file-ext', help='The file extension of images, e.g. JPG')
+def main(data_dir, species):
     """ Runs data processing scripts to turn raw data from (../raw) into
         cleaned data ready to be analyzed (saved in ../processed).
     """
     logger.info('making final data set from raw data')
-    #dataset = download_dataset()
-    #prepared_dataset = prepare_dataset(dataset)
-    #save_dataset(data_dir, prepared_dataset)
+    dataset = prepare_dataset(data_dir, species)
+    save_dataset(project_dir, dataset)
 
 
 if __name__ == '__main__':
