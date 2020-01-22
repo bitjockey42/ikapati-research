@@ -1,3 +1,12 @@
+""" Use this to detect the plant disease by passing in a filename
+
+Example:
+
+python src/models/predict_model.py models/Corn.h5 --image-filename 1621.JPG --classes-filename data/processed/Corn/labels.json
+
+This should output the disease (or "healthy")
+"""
+
 import os
 import json
 import click
