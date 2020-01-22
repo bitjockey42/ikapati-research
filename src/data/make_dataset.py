@@ -138,9 +138,13 @@ def standardize_pixel_values(pixels):
     return pixels
 
 
-def save_dataset(project_dir, dataset):
+def save_dataset(project_dir, dataset, species=None):
     """ Save dataset as *.npy to """
     output_dir = os.path.join(project_dir, "data", "processed")
+
+    if species is not None:
+        output_dir = os.path.join(output_dir, species)
+
     if not os.path.isdir(output_dir):
         os.makedirs(output_dir)
 
@@ -161,7 +165,7 @@ def main(data_dir, output_dir, species, file_ext):
     """
     logger.info('making final data set from raw data')
     dataset = prepare_dataset(data_dir, species, file_ext)
-    save_dataset(project_dir, dataset)
+    save_dataset(project_dir, dataset, species)
 
 
 if __name__ == '__main__':

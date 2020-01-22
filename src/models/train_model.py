@@ -13,6 +13,8 @@ import os
 import numpy as np
 import json
 
+from datetime import datetime
+
 from tensorflow import keras
 from tensorflow.keras import (
     layers,
@@ -22,10 +24,8 @@ from tensorflow.keras import (
     optimizers,
 )
 
-NUM_CLASSES = 2
 
-
-def model():
+def model(num_classes):
     """Generate a simple model"""
     model = keras.Sequential([
         layers.Conv2D(32, kernel_size=(3, 3),activation='linear',input_shape=(256,256,3),padding='same'),
@@ -44,7 +44,7 @@ def model():
         layers.Dense(128, activation='linear'),
         layers.LeakyReLU(alpha=0.1),
         layers.Dropout(0.3),
-        layers.Dense(NUM_CLASSES, activation='softmax'),
+        layers.Dense(num_classes, activation='softmax'),
     ])
 
     model.compile(
@@ -97,13 +97,21 @@ def _parse_args():
 if __name__ == "__main__":
     args, unknown = _parse_args()
 
+    # Get datetime
+    now = datetime.now()
+
     # load data
     train_data, train_labels = _load_training_data(args.train)
     eval_data, eval_labels = _load_testing_data(args.train)
 
+    # get num_classes
+    num_classes = train_labels[0].shape[0]
+
     # create the model
-    classifier = model()
+    classifier = model(num_classes)
 
     # train
     classifier.fit(train_data, train_labels, batch_size=args.batch_size, epochs=args.epochs, validation_data=(eval_data, eval_labels))
-    classifier.save(os.path.join(args.model_dir, '000000001'), 'model.h5')
+
+    # save model
+    classifier.save(os.path.join(args.model_dir, now.strftime("%Y-%m-%d")), "{}.model.h5".format(now.strftime("%H%M%S")))
