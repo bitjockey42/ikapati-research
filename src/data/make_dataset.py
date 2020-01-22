@@ -10,48 +10,34 @@ from dotenv import find_dotenv, load_dotenv
 from PIL import Image
 
 import numpy as np
+import pandas as pd
 from tensorflow import keras
 from sklearn.model_selection import train_test_split
 
 logger = logging.getLogger(__name__)
 
 
-def download_dataset():
-    """ Download data from fashion MNIST set """
-    logger.info('downloading dataset')
-    fashion_mnist = keras.datasets.fashion_mnist
-    (train_images, train_labels), (test_images, test_labels) = fashion_mnist.load_data()
-
-    return {
-        "train_images": train_images,
-        "train_labels": train_labels,
-        "test_images": test_images,
-        "test_labels": test_labels,
-    }
-
-
-def find_image_files(data_dir, file_ext="JPG"):
-    return glob.glob(os.path.join(data_dir, f"*.{file_ext}"))
-
-
-def prepare_dataset(project_dir, data_dir, species):
+def prepare_dataset(data_dir, species):
     """ Prepare the dataset for saving """
     logger.info(f"preparing dataset for {species}")
 
-    data_dirs = glob.glob(os.path.join(data_dir, f"{species}*"))
-    mapping = create_mapping(data_dirs, os.path.join(project_dir, "data", "processed", species, "labels.csv"))
+    # Create mapping of filenames and labels
+    folder_paths = get_folder_paths(data_dir, species)
+    mapping = create_mapping(folder_paths, os.path.join(project_dir, "data", "processed", species, "labels.csv"))
 
-    classes = get_classes(dataset["train_labels"])
+    # Convert labels to one hot encoding
+    classes = get_classes(mapping.Label.to_list())
     num_classes = len(classes)
     logger.info('num_classes {}'.format(num_classes))
     
-    train_data = preprocess_images(dataset["train_images"])
-    test_data = preprocess_images(dataset["test_images"])
+    # Preprocess Images
+
     
     train_labels_enc = convert_to_one_hot_labels(dataset["train_labels"], num_classes=num_classes)
     test_labels_enc = convert_to_one_hot_labels(dataset["test_labels"], num_classes=num_classes)
     
-    train_data, eval_data, train_labels_enc, eval_labels_enc = train_test_split(train_data, train_labels_enc, test_size=0.2, random_state=13)
+    # Split dataset
+    #train_data, eval_data, train_labels_enc, eval_labels_enc = train_test_split(train_data, train_labels_enc, test_size=0.2, random_state=13)
     
     return {
         "train_data": train_data,
@@ -63,9 +49,13 @@ def prepare_dataset(project_dir, data_dir, species):
     }
 
 
-def create_mapping(data_dirs, filename):
+def get_folder_paths(data_dir, species):
+    return sorted(glob.glob(os.path.join(data_dir, f"{species}*")))
+
+
+def create_mapping(folder_paths, filename):
     """ Create mapping of filenames, labels, and species from data dir names """
-    dir_path = os.path.dirname(filename)
+    dir_path = os.path.dirname(os.path.abspath(filename))
     logger.info(f"Creating mapping under {dir_path}")
     if not os.path.isdir(dir_path):
         os.makedirs(dir_path)
@@ -74,23 +64,30 @@ def create_mapping(data_dirs, filename):
         "Filename": [],
         "Label": [],
         "Species": [],
+        "Disease": [],
     }
 
-    for data_dir in data_dirs:
+    for i, data_dir in enumerate(folder_paths):
         image_files = list(map(os.path.basename, find_image_files(data_dir)))
-        species, label = data_dir.split("___")
-        labels = [label for _ in range(len(image_files))]
+        species, disease = data_dir.split("___")
+        diseases = [disease for _ in range(len(image_files))]
         species = [species for _ in range(len(image_files))]
+        labels = [i for _ in range(len(image_files))]
         
         data["Filename"].extend(image_files)
-        data["Label"].extend(labels)
         data["Species"].extend(species)
+        data["Disease"].extend(diseases)
+        data["Label"].extend(labels)
 
     mapping = pd.DataFrame(data)
     logger.info(f"Saving CSV to {filename}")
     mapping.to_csv(filename, index=False)
 
     return mapping
+
+
+def find_image_files(data_dir, file_ext="JPG"):
+    return glob.glob(os.path.join(data_dir, f"*.{file_ext}"))
 
 
 def get_classes(labels):
@@ -123,6 +120,7 @@ def load_image(filename):
 
 
 def get_image_filepath(data_dir, row):
+    """ Get image filepath from row """
     return os.path.join(data_dir, f"{row.Species}___{row.Label}", row.Filename)
 
 
