@@ -22,13 +22,13 @@ from tensorflow.keras import (
     optimizers,
 )
 
-NUM_CLASSES = 10
+NUM_CLASSES = 2
 
 
 def model():
     """Generate a simple model"""
     model = keras.Sequential([
-        layers.Conv2D(32, kernel_size=(3, 3),activation='linear',input_shape=(28,28,1),padding='same'),
+        layers.Conv2D(32, kernel_size=(3, 3),activation='linear',input_shape=(256,256,3),padding='same'),
         layers.LeakyReLU(alpha=0.1),
         layers.MaxPooling2D((2, 2),padding='same'),
         layers.Dropout(0.25),
@@ -59,14 +59,14 @@ def model():
 
 
 def _load_training_data(base_dir):
-    """Load MNIST training data"""
+    """Load training data"""
     x_train = np.load(os.path.join(base_dir, 'train_data.npy'))
     y_train = np.load(os.path.join(base_dir, 'train_labels.npy'))
     return x_train, y_train
 
 
 def _load_testing_data(base_dir):
-    """Load MNIST testing data"""
+    """Load testing data"""
     x_test = np.load(os.path.join(base_dir, 'eval_data.npy'))
     y_test = np.load(os.path.join(base_dir, 'eval_labels.npy'))
     return x_test, y_test
