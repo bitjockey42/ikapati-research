@@ -4,42 +4,34 @@ import os
 import logging
 import glob
 import random
+import json
 
 from pathlib import Path
 from dotenv import find_dotenv, load_dotenv
 from PIL import Image
 
 import numpy as np
-import pandas as pd
 from tensorflow import keras
 from sklearn.model_selection import train_test_split
 
 logger = logging.getLogger(__name__)
 
 
-def prepare_dataset(data_dir, species=None, file_ext="JPG"):
+def prepare_dataset(data_dir, output_dir, species=None, file_ext="JPG"):
     """ Prepare the dataset for saving """
     logger.info(f"preparing dataset for {species}")
 
     preprocessed_images = []
     labels = []
-    data = {
-        "Species": [],
-        "Filename": [],
-        "Disease": [],
-        "Label": [],
-    }
+    diseases = {}
 
     folder_paths = get_folder_paths(data_dir, species)
 
     for label_id, folder_path in enumerate(folder_paths):
         species, disease = get_species_disease(folder_path)
+        diseases[label_id] = disease
         filenames = find_image_files(folder_path, file_ext=file_ext)
         for filename in filenames:
-            data["Species"].append(species)
-            data["Disease"].append(disease)
-            data["Filename"].append(os.path.basename(filename))
-            data["Label"].append(label_id)
             labels.append(label_id)
             preprocessed_image = preprocess_image(filename)
             preprocessed_images.append(preprocessed_image)
@@ -50,6 +42,9 @@ def prepare_dataset(data_dir, species=None, file_ext="JPG"):
 
     train_data, test_data, train_labels_enc, test_labels_enc = train_test_split(preprocessed_images, labels_enc, test_size=0.2, random_state=13)
     train_data, eval_data, train_labels_enc, eval_labels_enc = train_test_split(train_data, train_labels_enc, test_size=0.2, random_state=13)
+
+    with open(os.path.join(output_dir, f"{species}-labels.json"), "w") as json_file:
+        json.dump(diseases, json_file)
 
     return {
         "train_data": train_data,
@@ -103,7 +98,6 @@ def preprocess_image(filename, normalize=True, standardize=True):
 def load_image(filename):
     """ Load image and optionaly split into different channels """
     image = Image.open(filename)
-    logger.info(f"LOADED {filename}\n{image.format} {image.mode} {image.size}")
     return image
 
 
@@ -138,19 +132,10 @@ def standardize_pixel_values(pixels):
     return pixels
 
 
-def save_dataset(project_dir, dataset, species=None):
+def save_dataset(output_dir, dataset):
     """ Save dataset as *.npy to """
-    output_dir = os.path.join(project_dir, "data", "processed")
-
-    if species is not None:
-        output_dir = os.path.join(output_dir, species)
-
-    if not os.path.isdir(output_dir):
-        os.makedirs(output_dir)
-
     for key, data in dataset.items():
         file_path = os.path.join(output_dir, f"{key}.npy")
-        logger.info(f"Saving {key} to {file_path}")
         np.save(file_path, data)
 
 
@@ -164,8 +149,15 @@ def main(data_dir, output_dir, species, file_ext):
         cleaned data ready to be analyzed (saved in ../processed).
     """
     logger.info('making final data set from raw data')
-    dataset = prepare_dataset(data_dir, species, file_ext)
-    save_dataset(project_dir, dataset, species)
+
+    if species is not None:
+        output_dir = os.path.join(output_dir, species)
+
+    if not os.path.isdir(output_dir):
+        os.makedirs(output_dir)
+
+    dataset = prepare_dataset(data_dir, output_dir, species, file_ext)
+    save_dataset(output_dir, dataset)
 
 
 if __name__ == '__main__':
