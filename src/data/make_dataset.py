@@ -23,7 +23,7 @@ def prepare_dataset(data_dir, species):
 
     # Create mapping of filenames and labels
     folder_paths = get_folder_paths(data_dir, species)
-    mapping = create_mapping(folder_paths, os.path.join(project_dir, "data", "processed", species, "labels.csv"))
+    mapping = create_mapping(folder_paths, os.path.join(data_dir, f"{species}_labels.csv"))
 
     # Convert labels to one hot encoding
     classes = get_classes(mapping.Label.to_list())
@@ -31,14 +31,14 @@ def prepare_dataset(data_dir, species):
     logger.info('num_classes {}'.format(num_classes))
     
     # Preprocess Images
-
-    
-    train_labels_enc = convert_to_one_hot_labels(dataset["train_labels"], num_classes=num_classes)
-    test_labels_enc = convert_to_one_hot_labels(dataset["test_labels"], num_classes=num_classes)
+    image_filepaths = mapping.apply(lambda row: get_image_filepath(data_dir, row), axis=1).to_list()
+    preprocessed_images = preprocess_images(image_filepaths)
+    labels_enc = convert_to_one_hot_labels(classes, num_classes=num_classes)
     
     # Split dataset
-    #train_data, eval_data, train_labels_enc, eval_labels_enc = train_test_split(train_data, train_labels_enc, test_size=0.2, random_state=13)
-    
+    train_data, test_data, train_labels_enc, test_labels_enc = train_test_split(preprocessed_images, labels_enc, test_size=0.2, random_state=13)
+    train_data, eval_data, train_labels_enc, eval_labels_enc = train_test_split(train_data, train_labels_enc, test_size=0.2, random_state=13)
+
     return {
         "train_data": train_data,
         "eval_data": eval_data,
@@ -87,6 +87,7 @@ def create_mapping(folder_paths, filename):
 
 
 def find_image_files(data_dir, file_ext="JPG"):
+    """ Find image files with file_ext in data_dir """
     return glob.glob(os.path.join(data_dir, f"*.{file_ext}"))
 
 
