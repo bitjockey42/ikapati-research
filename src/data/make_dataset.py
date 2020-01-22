@@ -17,25 +17,35 @@ from sklearn.model_selection import train_test_split
 logger = logging.getLogger(__name__)
 
 
-def prepare_dataset(data_dir, species):
+def prepare_dataset(data_dir, species, file_ext="JPG"):
     """ Prepare the dataset for saving """
     logger.info(f"preparing dataset for {species}")
 
-    # Create mapping of filenames and labels
-    folder_paths = get_folder_paths(data_dir, species)
-    mapping = create_mapping(folder_paths, os.path.join(data_dir, f"{species}_labels.csv"))
+    preprocessed_images = []
+    labels = []
+    data = {
+        "Species": [],
+        "Filename": [],
+        "Disease": [],
+    }
 
-    # Convert labels to one hot encoding
-    classes = get_classes(mapping.Label.to_list())
+    folder_paths = get_folder_paths(data_dir, species)
+
+    for label_id, folder_path in enumerate(folder_paths):
+        species, disease = get_species_disease(folder_path)
+        filenames = find_image_files(folder_path, file_ext=file_ext)
+        for filename in filenames:
+            data["Species"].append(species)
+            data["Disease"].append(disease)
+            data["Filename"].append(os.path.basename(filename))
+            labels.append(label_id)
+            preprocessed_image = preprocess_image(filename)
+            preprocessed_images.append(preprocessed_image)
+
+    classes = get_classes(labels)
     num_classes = len(classes)
-    logger.info('num_classes {}'.format(num_classes))
-    
-    # Preprocess Images
-    image_filepaths = mapping.apply(lambda row: get_image_filepath(data_dir, row), axis=1).to_list()
-    preprocessed_images = preprocess_images(image_filepaths)
-    labels_enc = convert_to_one_hot_labels(classes, num_classes=num_classes)
-    
-    # Split dataset
+    labels_enc = convert_to_one_hot_labels(labels, num_classes)
+
     train_data, test_data, train_labels_enc, test_labels_enc = train_test_split(preprocessed_images, labels_enc, test_size=0.2, random_state=13)
     train_data, eval_data, train_labels_enc, eval_labels_enc = train_test_split(train_data, train_labels_enc, test_size=0.2, random_state=13)
 
@@ -44,51 +54,24 @@ def prepare_dataset(data_dir, species):
         "eval_data": eval_data,
         "test_data": test_data,
         "train_labels": train_labels_enc,
-        "eval_labels": eval_labels_enc, 
-        "test_labels": test_labels_enc
+        "eval_labels": eval_labels_enc,
+        "test_labels": test_labels_enc,
     }
 
 
 def get_folder_paths(data_dir, species):
-    return sorted(glob.glob(os.path.join(data_dir, f"{species}*")))
+    return sorted(glob.glob(os.path.join(data_dir, f"{species}*/")))
 
 
-def create_mapping(folder_paths, filename):
-    """ Create mapping of filenames, labels, and species from data dir names """
-    dir_path = os.path.dirname(os.path.abspath(filename))
-    logger.info(f"Creating mapping under {dir_path}")
-    if not os.path.isdir(dir_path):
-        os.makedirs(dir_path)
-
-    data = {
-        "Filename": [],
-        "Label": [],
-        "Species": [],
-        "Disease": [],
-    }
-
-    for i, data_dir in enumerate(folder_paths):
-        image_files = list(map(os.path.basename, find_image_files(data_dir)))
-        species, disease = data_dir.split("___")
-        diseases = [disease for _ in range(len(image_files))]
-        species = [species for _ in range(len(image_files))]
-        labels = [i for _ in range(len(image_files))]
-        
-        data["Filename"].extend(image_files)
-        data["Species"].extend(species)
-        data["Disease"].extend(diseases)
-        data["Label"].extend(labels)
-
-    mapping = pd.DataFrame(data)
-    logger.info(f"Saving CSV to {filename}")
-    mapping.to_csv(filename, index=False)
-
-    return mapping
+def get_species_disease(folder_path):
+    folder_name = os.path.basename(os.path.dirname(folder_path))
+    species, disease = folder_name.split("___")
+    return species, disease
 
 
-def find_image_files(data_dir, file_ext="JPG"):
+def find_image_files(folder_path, file_ext="JPG"):
     """ Find image files with file_ext in data_dir """
-    return glob.glob(os.path.join(data_dir, f"*.{file_ext}"))
+    return glob.glob(os.path.join(folder_path, f"*.{file_ext}"))
 
 
 def get_classes(labels):
