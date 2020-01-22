@@ -13,7 +13,7 @@ import os
 import numpy as np
 import json
 
-from datetime import datetime
+from uuid import uuid4
 
 from tensorflow import keras
 from tensorflow.keras import (
@@ -97,9 +97,6 @@ def _parse_args():
 if __name__ == "__main__":
     args, unknown = _parse_args()
 
-    # Get datetime
-    now = datetime.now()
-
     # load data
     train_data, train_labels = _load_training_data(args.train)
     eval_data, eval_labels = _load_testing_data(args.train)
@@ -114,4 +111,4 @@ if __name__ == "__main__":
     classifier.fit(train_data, train_labels, batch_size=args.batch_size, epochs=args.epochs, validation_data=(eval_data, eval_labels))
 
     # save model
-    classifier.save(os.path.join(args.model_dir, now.strftime("%Y-%m-%d")), "{}.model.h5".format(now.strftime("%H%M%S")))
+    classifier.save(os.path.join(args.model_dir, '000000001'), 'model.h5')
