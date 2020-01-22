@@ -34,9 +34,13 @@ def find_image_files(data_dir, file_ext="JPG"):
     return glob.glob(os.path.join(data_dir, f"*.{file_ext}"))
 
 
-def prepare_dataset(dataset):
+def prepare_dataset(project_dir, data_dir, species):
     """ Prepare the dataset for saving """
-    logger.info('preparing dataset')
+    logger.info(f"preparing dataset for {species}")
+
+    data_dirs = glob.glob(os.path.join(data_dir, f"{species}*"))
+    mapping = create_mapping(data_dirs, os.path.join(project_dir, "data", "processed", species, "labels.csv"))
+
     classes = get_classes(dataset["train_labels"])
     num_classes = len(classes)
     logger.info('num_classes {}'.format(num_classes))
@@ -59,9 +63,34 @@ def prepare_dataset(dataset):
     }
 
 
-def prepare_labels():
-    # TODO: Add species and disease type columns to each leaf maps CSV
-    pass
+def create_mapping(data_dirs, filename):
+    """ Create mapping of filenames, labels, and species from data dir names """
+    dir_path = os.path.dirname(filename)
+    logger.info(f"Creating mapping under {dir_path}")
+    if not os.path.isdir(dir_path):
+        os.makedirs(dir_path)
+
+    data = {
+        "Filename": [],
+        "Label": [],
+        "Species": [],
+    }
+
+    for data_dir in data_dirs:
+        image_files = list(map(os.path.basename, find_image_files(data_dir)))
+        species, label = data_dir.split("___")
+        labels = [label for _ in range(len(image_files))]
+        species = [species for _ in range(len(image_files))]
+        
+        data["Filename"].extend(image_files)
+        data["Label"].extend(labels)
+        data["Species"].extend(species)
+
+    mapping = pd.DataFrame(data)
+    logger.info(f"Saving CSV to {filename}")
+    mapping.to_csv(filename, index=False)
+
+    return mapping
 
 
 def get_classes(labels):
@@ -74,12 +103,12 @@ def convert_to_one_hot_labels(labels, num_classes):
     return keras.utils.to_categorical(labels, num_classes=num_classes)
 
 
-def preprocess_images(images):
+def preprocess_images(filenames):
     """ Load and preprocess images before feeding into CNN """
-    pass
+    return np.asarray(list(map(preprocess_image, filenames)))
 
 
-def preprocess_image(filename, normalize, standardize):
+def preprocess_image(filename, normalize=True, standardize=True):
     image = load_image(filename)
     pixel_values = convert_to_pixel_values(image, normalize, standardize)
     pixel_values.reshape(-1, image.size[0], image.size[1], 1)
@@ -91,6 +120,10 @@ def load_image(filename):
     image = Image.open(filename)
     logger.info(f"LOADED {filename}\n{image.format} {image.mode} {image.size}")
     return image
+
+
+def get_image_filepath(data_dir, row):
+    return os.path.join(data_dir, f"{row.Species}___{row.Label}", row.Filename)
 
 
 def convert_to_pixel_values(image, normalize, standardize):
@@ -144,9 +177,9 @@ def main(data_dir):
         cleaned data ready to be analyzed (saved in ../processed).
     """
     logger.info('making final data set from raw data')
-    dataset = download_dataset()
-    prepared_dataset = prepare_dataset(dataset)
-    save_dataset(data_dir, prepared_dataset)
+    #dataset = download_dataset()
+    #prepared_dataset = prepare_dataset(dataset)
+    #save_dataset(data_dir, prepared_dataset)
 
 
 if __name__ == '__main__':
