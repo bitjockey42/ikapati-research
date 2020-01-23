@@ -32,6 +32,12 @@ def load_model(filename):
     return keras.models.load_model(filename)
 
 
+def predict(predictor, input_data, classes):
+    predictions = predictor.predict(np.array([input_data]))
+    prediction = predictions[0]
+    return classes[get_label_id(prediction)]
+
+
 @click.command()
 @click.argument('model_filename', type=click.Path())
 @click.option('--image-filename', type=click.Path())
@@ -39,10 +45,9 @@ def load_model(filename):
 def main(model_filename, image_filename, classes_filename):
     classes = get_classes(classes_filename)
     predictor = load_model(model_filename)
-    preprocessed_image = preprocess_image(image_filename, normalize=True, standardize=True)
-    predictions = predictor.predict(np.array([preprocessed_image]))
-    prediction = predictions[0]
-    print(classes[get_label_id(prediction)])
+    input_data = preprocess_image(image_filename, normalize=True, standardize=True)
+    prediction = predict(predictor, input_data, classes)
+    print(f"CLASS: {prediction}")
 
 
 if __name__ == '__main__':
