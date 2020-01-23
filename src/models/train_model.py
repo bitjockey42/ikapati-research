@@ -15,6 +15,7 @@ import json
 
 from uuid import uuid4
 
+import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import (
     layers,
@@ -72,6 +73,18 @@ def _load_testing_data(base_dir):
     return x_test, y_test
 
 
+def _save_model(model, model_dir):
+    model_id = str(uuid4())
+    print(f"Saving model {model_id}")
+    model_filepath = os.path.join(model_dir, f"{model_id}.h5")
+    model.save(model_filepath)
+    # Save as tflite model as well
+    converter = tf.lite.TFLiteConverter.from_keras_model(model)
+    tflite_model = converter.convert()
+    with open(f"{model_id}.tflite", "wb") as converted_model_file:
+        converted_model_file.write(tflite_model)
+
+
 def _parse_args():
     parser = argparse.ArgumentParser()
     
@@ -111,6 +124,4 @@ if __name__ == "__main__":
     classifier.fit(train_data, train_labels, batch_size=args.batch_size, epochs=args.epochs, validation_data=(eval_data, eval_labels))
 
     # save model
-
-    model_filepath = os.path.join(args.model_dir, "{0}.h5".format(str(uuid4())))
-    classifier.save(model_filepath)
+    _save_model(classifier, args.model_dir)

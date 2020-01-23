@@ -26,14 +26,14 @@ def prepare_dataset(data_dir, output_dir, species=None, file_ext="JPG"):
 
     preprocessed_images = []
     labels = []
-    diseases = {}
+    diseases = []
 
     folder_paths = utils.get_folder_paths(data_dir, species)
 
     for label_id, folder_path in enumerate(folder_paths):
         species, disease = utils.get_species_disease(folder_path)
-        diseases[label_id] = disease
         filenames = utils.find_image_files(folder_path, file_ext=file_ext)
+        diseases.append(disease)
         for filename in filenames:
             labels.append(label_id)
             preprocessed_image = preprocess_image(filename)
@@ -46,8 +46,8 @@ def prepare_dataset(data_dir, output_dir, species=None, file_ext="JPG"):
     train_data, test_data, train_labels_enc, test_labels_enc = train_test_split(preprocessed_images, labels_enc, test_size=0.2, random_state=13)
     train_data, eval_data, train_labels_enc, eval_labels_enc = train_test_split(train_data, train_labels_enc, test_size=0.2, random_state=13)
 
-    with open(os.path.join(output_dir, f"{species}-labels.json"), "w") as json_file:
-        json.dump(diseases, json_file)
+    with open(os.path.join(output_dir, f"diseases.txt"), "w") as diseases_file:
+        diseases_file.write("\n".join(diseases))
 
     return {
         "train_data": train_data,
