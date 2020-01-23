@@ -2,7 +2,10 @@ import glob
 import os
 import numpy as np
 
+from sklearn.model_selection import train_test_split
 from tensorflow import keras
+
+DELIM = "___"
 
 
 def get_folder_paths(data_dir, species=None):
@@ -37,3 +40,25 @@ def save_dataset(output_dir, dataset):
     for key, data in dataset.items():
         file_path = os.path.join(output_dir, f"{key}.npy")
         np.save(file_path, data)
+
+
+def split_dataset(output_dir):
+    """ Split dataset into train, eval, and test sets """
+    file_paths = sorted(glob.glob(os.path.join(output_dir, "**.npy")))
+    labels = [get_label_id(file_path) for file_path in file_paths]
+    train_files, test_files, train_labels, test_labels = train_test_split(file_paths, labels, test_size=0.2, random_state=13)
+
+    print("Save train data")
+    train_data = [np.load(train_file) for train_file in train_files]
+    np.save(os.path.join(output_dir, "train_data.npy"), train_data)
+    np.save(os.path.join(output_dir, "train_labels.npy"), train_labels)
+
+    print("Save test data")
+    test_data = [np.load(test_file) for test_file in test_files]
+    np.save(os.path.join(output_dir, "test_data.npy"), test_data)
+    np.save(os.path.join(output_dir, "test_labels.npy"), test_labels)
+
+
+def get_label_id(file_path):
+    label_id, _ = os.path.basename(file_path).split(DELIM)
+    return int(label_id)
