@@ -57,19 +57,20 @@ def save_dataset(output_dir, dataset):
 
 def split_dataset(output_dir):
     """ Split dataset into train, eval, and test sets """
-    file_paths = sorted(glob.glob(os.path.join(output_dir, "**.npy")))
+    file_paths = sorted(glob.glob(os.path.join(output_dir, f"**{DELIM}**.npy")))
     labels = [get_label_id(file_path) for file_path in file_paths]
+    num_classes = len(get_classes(labels))
     train_files, test_files, train_labels, test_labels = train_test_split(file_paths, labels, test_size=0.2, random_state=13)
 
     print("Save train data")
     train_data = [np.load(train_file) for train_file in train_files]
     np.save(os.path.join(output_dir, "train_data.npy"), train_data)
-    np.save(os.path.join(output_dir, "train_labels.npy"), train_labels)
+    np.save(os.path.join(output_dir, "train_labels.npy"), convert_to_one_hot_labels(train_labels, num_classes=num_classes))
 
     print("Save test data")
     test_data = [np.load(test_file) for test_file in test_files]
     np.save(os.path.join(output_dir, "test_data.npy"), test_data)
-    np.save(os.path.join(output_dir, "test_labels.npy"), test_labels)
+    np.save(os.path.join(output_dir, "test_labels.npy"), convert_to_one_hot_labels(test_labels, num_classes=num_classes))
 
 
 def get_label_id(file_path):
