@@ -9,18 +9,6 @@ from tensorflow import keras
 DELIM = "___"
 
 
-def progress(count, total, status=''):
-    """ Simple progress bar https://gist.github.com/vladignatyev/06860ec2040cb497f0f3 """
-    bar_len = 60
-    filled_len = int(round(bar_len * count / float(total)))
-
-    percents = round(100.0 * count / float(total), 1)
-    bar = '=' * filled_len + '-' * (bar_len - filled_len)
-
-    sys.stdout.write('[%s] %s%s ...%s\r' % (bar, percents, '%', status))
-    sys.stdout.flush()
-
-
 def get_folder_paths(data_dir, species=None):
     if species:
         return sorted(glob.glob(os.path.join(data_dir, f"{species}*/")))
@@ -61,26 +49,22 @@ def split_dataset(output_dir):
     labels = [get_label_id(file_path) for file_path in file_paths]
     num_classes = len(get_classes(labels))
     train_files, test_files, train_labels, test_labels = train_test_split(file_paths, labels, test_size=0.2, random_state=13)
+    train_files, eval_files, train_labels, eval_labels = train_test_split(train_files, train_labels, test_size=0.2, random_state=13)
 
-    train_data = []
-    total_train_files = len(train_files)
-
-    for i, train_file in enumerate(train_files):
-        progress(i, total_train_files, "Saving training data")
-        train_data.append(np.load(train_file))
-
+    train_data = [np.load(train_file) for train_file in train_files]
     np.save(os.path.join(output_dir, "train_data.npy"), train_data)
     np.save(os.path.join(output_dir, "train_labels.npy"), convert_to_one_hot_labels(train_labels, num_classes=num_classes))
+    train_data = train_labels = None
+
+    eval_data = [np.load(eval_file) for eval_file in eval_files]
+    np.save(os.path.join(output_dir, "eval_data.npy"), eval_data)
+    np.save(os.path.join(output_dir, "eval_labels.npy"), convert_to_one_hot_labels(eval_labels, num_classes=num_classes))
+    eval_data = eval_labels = None
 
     test_data = [np.load(test_file) for test_file in test_files]
-    total_test_files = len(test_files)
-
-    for i, test_file in enumerate(test_files):
-        progress(i, total_test_files, "Saving test data")
-        test_data.append(np.load(test_file))
-
     np.save(os.path.join(output_dir, "test_data.npy"), test_data)
     np.save(os.path.join(output_dir, "test_labels.npy"), convert_to_one_hot_labels(test_labels, num_classes=num_classes))
+    test_data = test_labels = None
 
 
 def get_label_id(file_path):

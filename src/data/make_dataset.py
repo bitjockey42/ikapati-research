@@ -31,9 +31,7 @@ def prepare_dataset(data_dir, output_dir, species, file_ext="JPG"):
         species, disease = utils.get_species_disease(folder_path)
         filenames = utils.find_image_files(folder_path)
         labels.append(disease)
-        total_filenames = len(filenames)
         for file_id, filename in enumerate(filenames):
-            utils.progress(file_id, total_filenames, f"Pre-processing")
             image_data = preprocess_image(filename)
             dest_path = os.path.join(output_dir, f"{label_id}{DELIM}{file_id}.npy")
             np.save(dest_path, image_data)
