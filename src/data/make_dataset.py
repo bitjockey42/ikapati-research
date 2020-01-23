@@ -22,47 +22,8 @@ logger = logging.getLogger(__name__)
 DELIM = "___"
 
 
-def prepare_dataset(data_dir, output_dir, species=None, file_ext="JPG"):
-    """ Prepare the dataset for saving """
-    logger.info(f"preparing dataset for {species}")
-
-    preprocessed_images = []
-    labels = []
-    diseases = []
-
-    folder_paths = utils.get_folder_paths(data_dir, species)
-
-    for label_id, folder_path in enumerate(folder_paths):
-        species, disease = utils.get_species_disease(folder_path)
-        filenames = utils.find_image_files(folder_path, file_ext=file_ext)
-        diseases.append(disease)
-        for filename in filenames:
-            labels.append(label_id)
-            preprocessed_image = preprocess_image(filename)
-            preprocessed_images.append(preprocessed_image)
-
-    classes = utils.get_classes(labels)
-    num_classes = len(classes)
-    labels_enc = utils.convert_to_one_hot_labels(labels, num_classes)
-
-    train_data, test_data, train_labels_enc, test_labels_enc = train_test_split(preprocessed_images, labels_enc, test_size=0.2, random_state=13)
-    train_data, eval_data, train_labels_enc, eval_labels_enc = train_test_split(train_data, train_labels_enc, test_size=0.2, random_state=13)
-
-    with open(os.path.join(output_dir, f"diseases.txt"), "w") as diseases_file:
-        diseases_file.write("\n".join(diseases))
-
-    return {
-        "train_data": train_data,
-        "eval_data": eval_data,
-        "test_data": test_data,
-        "train_labels": train_labels_enc,
-        "eval_labels": eval_labels_enc,
-        "test_labels": test_labels_enc,
-    }
-
-
-def _prepare_dataset(data_dir, output_dir, species, file_ext="JPG"):
-    logger.info("Preparing dataset")
+def prepare_dataset(data_dir, output_dir, species, file_ext="JPG"):
+    logger.info(f"Preparing {species} dataset")
     folder_paths = utils.get_folder_paths(data_dir, species)
     labels = []
 
@@ -77,18 +38,6 @@ def _prepare_dataset(data_dir, output_dir, species, file_ext="JPG"):
     
     with open(os.path.join(output_dir, f"labels.txt"), "w") as labels_file:
         labels_file.write("\n".join(labels))
-
-
-def _split_dataset(output_dir):
-    file_paths = sorted(glob.glob(os.path.join(output_dir, "**.npy")))
-    labels = [_get_label_id(file_path) for file_path in file_paths]
-    train_files, test_files, train_labels, test_labels = train_test_split(file_paths, labels, test_size=0.2, random_state=13)
-    train_files, val_files, train_labels, val_labels = train_test_split(train_files, train_labels, test_size=0.2, random_state=13)
-
-
-def _get_label_id(file_path):
-    label_id, _ = os.path.basename(file_path).split(DELIM)
-    return int(label_id)
 
 
 @click.command()
@@ -108,8 +57,8 @@ def main(data_dir, output_dir, species, file_ext):
     if not os.path.isdir(output_dir):
         os.makedirs(output_dir)
 
-    _prepare_dataset(data_dir, output_dir, species, file_ext)
-    _split_dataset(output_dir)
+    prepare_dataset(data_dir, output_dir, species, file_ext)
+    utils.split_dataset(output_dir)
 
 
 if __name__ == '__main__':
