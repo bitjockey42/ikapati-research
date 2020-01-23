@@ -33,10 +33,10 @@ def prepare_dataset(data_dir, output_dir, species, file_ext="JPG"):
         labels.append(disease)
         total_filenames = len(filenames)
         for file_id, filename in enumerate(filenames):
+            utils.progress(file_id, total_filenames, f"Pre-processing")
             image_data = preprocess_image(filename)
             dest_path = os.path.join(output_dir, f"{label_id}{DELIM}{file_id}.npy")
             np.save(dest_path, image_data)
-            utils.progress(file_id, total_filenames, f"Pre-processing {label_id}")
     
     with open(os.path.join(output_dir, f"labels.txt"), "w") as labels_file:
         labels_file.write("\n".join(labels))
