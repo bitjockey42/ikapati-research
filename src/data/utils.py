@@ -62,13 +62,23 @@ def split_dataset(output_dir):
     num_classes = len(get_classes(labels))
     train_files, test_files, train_labels, test_labels = train_test_split(file_paths, labels, test_size=0.2, random_state=13)
 
-    print("Save train data")
-    train_data = [np.load(train_file) for train_file in train_files]
+    train_data = []
+    total_train_files = len(train_files)
+
+    for i, train_file in enumerate(train_files):
+        progress(i, total_train_files, "Saving training data")
+        train_data.append(np.load(train_file))
+
     np.save(os.path.join(output_dir, "train_data.npy"), train_data)
     np.save(os.path.join(output_dir, "train_labels.npy"), convert_to_one_hot_labels(train_labels, num_classes=num_classes))
 
-    print("Save test data")
     test_data = [np.load(test_file) for test_file in test_files]
+    total_test_files = len(test_files)
+
+    for i, test_file in enumerate(test_files):
+        progress(i, total_test_files, "Saving test data")
+        test_data.append(np.load(test_file))
+
     np.save(os.path.join(output_dir, "test_data.npy"), test_data)
     np.save(os.path.join(output_dir, "test_labels.npy"), convert_to_one_hot_labels(test_labels, num_classes=num_classes))
 
