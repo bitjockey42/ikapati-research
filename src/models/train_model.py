@@ -81,7 +81,7 @@ def _save_model(model, model_dir):
     # Save as tflite model as well
     converter = tf.lite.TFLiteConverter.from_keras_model(model)
     tflite_model = converter.convert()
-    with open(f"{model_id}.tflite", "wb") as converted_model_file:
+    with open(os.path.join(model_dir, f"{model_id}.tflite"), "wb") as converted_model_file:
         converted_model_file.write(tflite_model)
 
 
