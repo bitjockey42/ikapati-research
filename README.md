@@ -66,6 +66,13 @@ With conda, you can install from the `environment.yml` file:
 conda env create --file environment.yml
 ```
 
+Alternatively:
+
+```
+conda install pip pandas numpy
+conda install -c conda-forge pillow tensorflow seaborn scikit-learn
+```
+
 Then install requirements:
 
 ```
