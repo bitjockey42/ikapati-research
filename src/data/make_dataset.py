@@ -19,6 +19,8 @@ from src.data import utils
 
 logger = logging.getLogger(__name__)
 
+DELIM = "___"
+
 
 def prepare_dataset(data_dir, output_dir, species=None, file_ext="JPG"):
     """ Prepare the dataset for saving """
@@ -59,6 +61,36 @@ def prepare_dataset(data_dir, output_dir, species=None, file_ext="JPG"):
     }
 
 
+def _prepare_dataset(data_dir, output_dir, species, file_ext="JPG"):
+    logger.info("Preparing dataset")
+    folder_paths = utils.get_folder_paths(data_dir, species)
+    labels = []
+
+    for label_id, folder_path in enumerate(folder_paths):
+        species, disease = utils.get_species_disease(folder_path)
+        filenames = utils.find_image_files(folder_path)
+        labels.append(disease)
+        for file_id, filename in enumerate(filenames):
+            image_data = preprocess_image(filename)
+            dest_path = os.path.join(output_dir, f"{label_id}{DELIM}{file_id}.npy")
+            np.save(dest_path, image_data)
+    
+    with open(os.path.join(output_dir, f"labels.txt"), "w") as labels_file:
+        labels_file.write("\n".join(labels))
+
+
+def _split_dataset(output_dir):
+    file_paths = sorted(glob.glob(os.path.join(output_dir, "**.npy")))
+    labels = [_get_label_id(file_path) for file_path in file_paths]
+    train_files, test_files, train_labels, test_labels = train_test_split(file_paths, labels, test_size=0.2, random_state=13)
+    train_files, val_files, train_labels, val_labels = train_test_split(train_files, train_labels, test_size=0.2, random_state=13)
+
+
+def _get_label_id(file_path):
+    label_id, _ = os.path.basename(file_path).split(DELIM)
+    return int(label_id)
+
+
 @click.command()
 @click.argument('data_dir', type=click.Path())
 @click.argument('output_dir', type=click.Path())
@@ -76,8 +108,8 @@ def main(data_dir, output_dir, species, file_ext):
     if not os.path.isdir(output_dir):
         os.makedirs(output_dir)
 
-    dataset = prepare_dataset(data_dir, output_dir, species, file_ext)
-    utils.save_dataset(output_dir, dataset)
+    _prepare_dataset(data_dir, output_dir, species, file_ext)
+    _split_dataset(output_dir)
 
 
 if __name__ == '__main__':
