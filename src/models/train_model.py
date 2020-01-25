@@ -47,6 +47,8 @@ def model(num_classes):
         layers.Dropout(0.3),
         layers.Dense(num_classes, activation='softmax'),
     ])
+    
+    # TODO: set model.input to the TFRecord
 
     model.compile(
         loss=losses.categorical_crossentropy,
