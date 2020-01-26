@@ -64,7 +64,7 @@ def model(num_classes, learning_rate=0.1, activation="linear"):
             layers.Dropout(0.4),
             # FC
             layers.Flatten(),
-            layers.Dense(128, activation=activation),
+            layers.Dense(1024, activation=activation),
             layers.LeakyReLU(alpha=learning_rate),
             layers.Dropout(0.3),
             layers.Dense(num_classes, activation="softmax"),
