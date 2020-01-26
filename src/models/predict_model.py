@@ -35,9 +35,9 @@ def load_tflite_model(filename):
 
 
 @click.command()
-@click.argument('model_filename', type=click.Path())
-@click.option('--input-filename', type=click.Path())
-@click.option('--labels-filename', type=click.Path())
+@click.argument("model_filename", type=click.Path())
+@click.option("--input-filename", type=click.Path())
+@click.option("--labels-filename", type=click.Path())
 def main(model_filename, input_filename, labels_filename):
     # Load labels
     labels = get_labels(labels_filename)
@@ -53,14 +53,14 @@ def main(model_filename, input_filename, labels_filename):
     output_details = interpreter.get_output_details()
 
     # Make a prediction
-    interpreter.set_tensor(input_details[0]['index'], np.array([input_data]))
+    interpreter.set_tensor(input_details[0]["index"], np.array([input_data]))
     interpreter.invoke()
-    predictions = interpreter.get_tensor(output_details[0]['index'])
+    predictions = interpreter.get_tensor(output_details[0]["index"])
     label_id = get_label_id(predictions[0])
 
     # Show result
     print(f"Detected: {labels[label_id]}")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
