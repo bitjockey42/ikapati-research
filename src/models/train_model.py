@@ -12,10 +12,16 @@ import argparse
 import os
 import numpy as np
 import json
+import pathlib
+import shutil
+import tempfile
 
 from datetime import datetime
 from uuid import uuid4
 
+import tensorflow_docs as tfdocs
+import tensorflow_docs.modeling
+import tensorflow_docs.plots
 import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import (
@@ -63,7 +69,7 @@ def model(num_classes):
     model.compile(
         loss=losses.categorical_crossentropy,
         optimizer=optimizers.Adam(),
-        metrics=["accuracy"],
+        metrics=["accuracy", "categorical_crossentropy"],
     )
 
     model.summary()
@@ -71,7 +77,7 @@ def model(num_classes):
     return model
 
 
-def _get_callbacks(monitor, model_dir, model_id):
+def _get_callbacks(logdir, monitor, model_dir, model_id):
     return [
         keras.callbacks.EarlyStopping(
             # Stop training when monitor (e.g. `val_loss`) is no longer improving
@@ -88,6 +94,7 @@ def _get_callbacks(monitor, model_dir, model_id):
             monitor=monitor,
             verbose=1,
         ),
+        keras.callbacks.TensorBoard(logdir),
     ]
 
 
@@ -112,6 +119,10 @@ def save_model(model, model_dir, model_id):
 
 
 def train(train_dir, model_dir, batch_size, epochs, monitor):
+    # Set up logs
+    logdir = pathlib.Path(tempfile.mkdtemp())/"tensorboard_logs"
+    shutil.rmtree(logdir, ignore_errors=True)
+
     # Load metadata
     metadata_file_path = os.path.join(train_dir, "metadata.json")
     metadata = io.read_metadata(metadata_file_path)
@@ -141,7 +152,7 @@ def train(train_dir, model_dir, batch_size, epochs, monitor):
         steps_per_epoch=steps,
         validation_data=eval_dataset,
         validation_steps=validation_steps,
-        callbacks=_get_callbacks(monitor, model_dir, model_id),
+        callbacks=_get_callbacks(logdir, monitor, model_dir, model_id),
     )
 
     write_metadata(
@@ -171,7 +182,7 @@ def write_metadata(model_dir, model_id, batch_size, epochs, monitor, dataset_met
     }
 
     with open(metadata_file_path, "w") as json_file:
-        json.dump(metadata, json_file)
+        json.dump(metadata, json_file, cls=io.NumpyEncoder)
 
     return metadata
 
