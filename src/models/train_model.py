@@ -77,7 +77,7 @@ def model(num_classes):
     return model
 
 
-def _get_callbacks(logdir, monitor, model_dir, model_id):
+def _get_callbacks(start_time, logdir, monitor, model_dir, model_id):
     return [
         tfdocs.modeling.EpochDots(),
         keras.callbacks.EarlyStopping(
@@ -90,7 +90,7 @@ def _get_callbacks(logdir, monitor, model_dir, model_id):
             verbose=1,
         ),
         keras.callbacks.ModelCheckpoint(
-            filepath=os.path.join(model_dir, model_id, "{epoch}.h5"),
+            filepath=os.path.join(model_dir, model_id, start_time, "{epoch}.h5"),
             save_best_only=True,
             monitor=monitor,
             verbose=1,
@@ -104,9 +104,9 @@ def load_dataset(data_dir, dataset_name, batch_size, num_classes):
     return io.read_dataset(record_file_path, batch_size, num_classes)
 
 
-def save_model(model, model_dir, model_id):
+def save_model(model, model_dir, model_id, start_time):
     print(f"Saving model {model_id}")
-    model_filepath = os.path.join(model_dir, model_id, "final.h5")
+    model_filepath = os.path.join(model_dir, model_id, start_time, "final.h5")
     model.save(model_filepath)
 
     # Save as tflite model as well
@@ -119,7 +119,7 @@ def save_model(model, model_dir, model_id):
         converted_model_file.write(tflite_model)
 
 
-def train(train_dir, model_dir, batch_size, epochs, monitor):
+def train(train_dir, model_dir, batch_size, epochs, monitor, start_time):
     # Set up logs
     logdir = pathlib.Path(tempfile.mkdtemp())/"tensorboard_logs"
     shutil.rmtree(logdir, ignore_errors=True)
@@ -131,7 +131,7 @@ def train(train_dir, model_dir, batch_size, epochs, monitor):
     num_classes = metadata["num_classes"]
 
     # Create directories
-    model_dir_path = os.path.join(model_dir, model_id)
+    model_dir_path = os.path.join(model_dir, model_id, start_time)
     if not os.path.exists(model_dir_path):
         os.makedirs(model_dir_path)
 
@@ -153,7 +153,7 @@ def train(train_dir, model_dir, batch_size, epochs, monitor):
         steps_per_epoch=steps,
         validation_data=eval_dataset,
         validation_steps=validation_steps,
-        callbacks=_get_callbacks(logdir, monitor, model_dir, model_id),
+        callbacks=_get_callbacks(start_time, logdir, monitor, model_dir, model_id),
     )
 
     write_metadata(
@@ -164,12 +164,13 @@ def train(train_dir, model_dir, batch_size, epochs, monitor):
         monitor=monitor,
         dataset_metadata=metadata,
         history=history,
+        start_time=start_time,
     )
 
     return classifier, history, model_id
 
 
-def write_metadata(model_dir, model_id, batch_size, epochs, monitor, dataset_metadata, history):
+def write_metadata(model_dir, model_id, batch_size, epochs, monitor, dataset_metadata, history, start_time):
     print("Write metadata for model")
     metadata_file_path = os.path.join(model_dir, model_id, "metadata.json")
     current_datetime = datetime.utcnow()
@@ -221,6 +222,7 @@ def _parse_args():
 
 if __name__ == "__main__":
     args, unknown = _parse_args()
+    start_time = datetime.utcnow().strftime("%Y-%m-%d__%H_%M")
 
     classifier, history, model_id = train(
         train_dir=args.train,
@@ -228,7 +230,8 @@ if __name__ == "__main__":
         batch_size=args.batch_size,
         epochs=args.epochs,
         monitor=args.monitor,
+        start_time=start_time,
     )
 
     # save model
-    save_model(classifier, args.model_dir, model_id)
+    save_model(classifier, args.model_dir, model_id, start_time)
