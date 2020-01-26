@@ -172,7 +172,7 @@ def train(train_dir, model_dir, batch_size, epochs, monitor, start_time):
 
 def write_metadata(model_dir, model_id, batch_size, epochs, monitor, dataset_metadata, history, start_time):
     print("Write metadata for model")
-    metadata_file_path = os.path.join(model_dir, model_id, "metadata.json")
+    metadata_file_path = os.path.join(model_dir, model_id, start_time, "metadata.json")
     current_datetime = datetime.utcnow()
 
     metadata = {
