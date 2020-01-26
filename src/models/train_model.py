@@ -77,13 +77,13 @@ def _get_callbacks(monitor, model_dir, model_id):
             monitor=monitor,
             # "no longer improving" being defined as "no better than 1e-2 less"
             min_delta=1e-2,
-            # "no longer improving" being further defined as "for at least 2 epochs"
-            patience=2,
+            # "no longer improving" being further defined as "for at least 3 epochs"
+            patience=5,
             verbose=1,
         ),
         keras.callbacks.ModelCheckpoint(
             filepath=os.path.join(model_dir, model_id, "{epoch}.h5"),
-            save_best_only=False,
+            save_best_only=True,
             monitor=monitor,
             verbose=1
         ),
@@ -162,6 +162,7 @@ def train(train_dir, model_dir, batch_size, epochs, monitor):
 
     # Steps
     steps = metadata["file_counts"]["train"] // batch_size
+    validation_steps = metadata["file_counts"]["eval"] // batch_size
 
     # Train
     history = classifier.fit(
@@ -169,7 +170,7 @@ def train(train_dir, model_dir, batch_size, epochs, monitor):
         epochs=epochs,
         steps_per_epoch=steps,
         validation_data=eval_dataset,
-        validation_steps=steps,
+        validation_steps=validation_steps,
         callbacks=_get_callbacks(monitor, model_dir, model_id),
     )
 
