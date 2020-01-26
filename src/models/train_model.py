@@ -69,7 +69,7 @@ def model(num_classes):
     model.compile(
         loss=losses.categorical_crossentropy,
         optimizer=optimizers.Adam(),
-        metrics=["accuracy", "categorical_crossentropy"],
+        metrics=["accuracy"],
     )
 
     model.summary()
@@ -79,6 +79,7 @@ def model(num_classes):
 
 def _get_callbacks(logdir, monitor, model_dir, model_id):
     return [
+        tfdocs.modeling.EpochDots(),
         keras.callbacks.EarlyStopping(
             # Stop training when monitor (e.g. `val_loss`) is no longer improving
             monitor=monitor,
