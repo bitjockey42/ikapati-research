@@ -36,31 +36,36 @@ from tensorflow.keras import (
 from src.data import io
 
 
-def model(num_classes):
+def model(num_classes, learning_rate=0.1, activation="linear"):
     """Generate a simple model"""
+    print(f"learning_rate: {learning_rate} - activation: {activation}")
     model = keras.Sequential(
         [
+            # Layer 1
             layers.Conv2D(
                 32,
                 kernel_size=(3, 3),
-                activation="linear",
+                activation=activation,
                 input_shape=(256, 256, 3),
                 padding="same",
             ),
-            layers.LeakyReLU(alpha=0.1),
+            layers.LeakyReLU(alpha=learning_rate),
             layers.MaxPooling2D((2, 2), padding="same"),
             layers.Dropout(0.25),
-            layers.Conv2D(64, (3, 3), activation="linear", padding="same"),
-            layers.LeakyReLU(alpha=0.1),
+            # Layer 2
+            layers.Conv2D(64, (3, 3), activation=activation, padding="same"),
+            layers.LeakyReLU(alpha=learning_rate),
             layers.MaxPooling2D(pool_size=(2, 2), padding="same"),
             layers.Dropout(0.25),
-            layers.Conv2D(128, (3, 3), activation="linear", padding="same"),
-            layers.LeakyReLU(alpha=0.1),
+            # Layer 3
+            layers.Conv2D(128, (3, 3), activation=activation, padding="same"),
+            layers.LeakyReLU(alpha=learning_rate),
             layers.MaxPooling2D(pool_size=(2, 2), padding="same"),
             layers.Dropout(0.4),
+            # FC
             layers.Flatten(),
-            layers.Dense(128, activation="linear"),
-            layers.LeakyReLU(alpha=0.1),
+            layers.Dense(128, activation=activation),
+            layers.LeakyReLU(alpha=learning_rate),
             layers.Dropout(0.3),
             layers.Dense(num_classes, activation="softmax"),
         ]
@@ -114,14 +119,25 @@ def save_model(model, model_dir, model_id, start_time):
     tflite_model = converter.convert()
 
     with open(
-        os.path.join(model_dir, model_id, "model.tflite"), "wb"
+        os.path.join(model_dir, model_id, start_time, "model.tflite"), "wb"
     ) as converted_model_file:
         converted_model_file.write(tflite_model)
 
 
-def train(train_dir, model_dir, batch_size, epochs, monitor, start_time):
+def train(
+    train_dir,
+    model_dir,
+    batch_size,
+    epochs,
+    monitor,
+    start_time,
+    learning_rate=0.1,
+    activation="linear",
+    early_stopping=False,
+):
+
     # Set up logs
-    logdir = pathlib.Path(tempfile.mkdtemp())/"tensorboard_logs"
+    logdir = pathlib.Path(tempfile.mkdtemp()) / "tensorboard_logs"
     shutil.rmtree(logdir, ignore_errors=True)
 
     # Load metadata
@@ -140,11 +156,15 @@ def train(train_dir, model_dir, batch_size, epochs, monitor, start_time):
     eval_dataset = load_dataset(train_dir, "eval", batch_size, num_classes)
 
     # Create the model
-    classifier = model(num_classes)
+    classifier = model(num_classes, learning_rate=learning_rate, activation=activation)
 
     # Steps
     steps = metadata["file_counts"]["train"] // batch_size
     validation_steps = metadata["file_counts"]["eval"] // batch_size
+
+    callbacks = None
+    if early_stopping:
+        callbacks = _get_callbacks(start_time, logdir, monitor, model_dir, model_id)
 
     # Train
     history = classifier.fit(
@@ -153,7 +173,7 @@ def train(train_dir, model_dir, batch_size, epochs, monitor, start_time):
         steps_per_epoch=steps,
         validation_data=eval_dataset,
         validation_steps=validation_steps,
-        callbacks=_get_callbacks(start_time, logdir, monitor, model_dir, model_id),
+        callbacks=callbacks,
     )
 
     write_metadata(
@@ -170,7 +190,16 @@ def train(train_dir, model_dir, batch_size, epochs, monitor, start_time):
     return classifier, history, model_id
 
 
-def write_metadata(model_dir, model_id, batch_size, epochs, monitor, dataset_metadata, history, start_time):
+def write_metadata(
+    model_dir,
+    model_id,
+    batch_size,
+    epochs,
+    monitor,
+    dataset_metadata,
+    history,
+    start_time,
+):
     print("Write metadata for model")
     metadata_file_path = os.path.join(model_dir, model_id, start_time, "metadata.json")
     current_datetime = datetime.utcnow()
@@ -196,6 +225,12 @@ def _parse_args():
     parser.add_argument("--epochs", type=int, default=10)
     parser.add_argument("--batch_size", type=int, default=100)
     parser.add_argument("--learning_rate", type=float, default=0.1)
+
+    # The activation function to try, e.g "linear"
+    parser.add_argument("--activation", type=str)
+
+    # Whether to do early stopping
+    parser.add_argument("--early-stopping", action="store_true", default=False)
 
     # Data, model, and output directories
     # model_dir is always passed in from SageMaker. By default this is a S3 path under the default bucket.
@@ -231,6 +266,9 @@ if __name__ == "__main__":
         epochs=args.epochs,
         monitor=args.monitor,
         start_time=start_time,
+        learning_rate=args.learning_rate,
+        activation=args.activation,
+        early_stopping=args.early_stopping,
     )
 
     # save model
