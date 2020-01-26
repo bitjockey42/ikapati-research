@@ -144,10 +144,20 @@ def train(train_dir, model_dir, batch_size, epochs, monitor):
         callbacks=_get_callbacks(monitor, model_dir, model_id),
     )
 
+    write_metadata(
+        model_dir=model_dir,
+        model_id=model_id,
+        batch_size=batch_size,
+        epochs=epochs,
+        monitor=monitor,
+        dataset_metadata=metadata,
+        history=history,
+    )
+
     return classifier, history, model_id
 
 
-def write_metadata(model_dir, model_id, batch_size, epochs, monitor):
+def write_metadata(model_dir, model_id, batch_size, epochs, monitor, dataset_metadata, history):
     print("Write metadata for model")
     metadata_file_path = os.path.join(model_dir, model_id, "metadata.json")
     current_datetime = datetime.utcnow()
@@ -156,18 +166,14 @@ def write_metadata(model_dir, model_id, batch_size, epochs, monitor):
         "id": model_id,
         "created_date": current_datetime.strftime("%Y-%m-%d %T%z"),
         "arguments": {"batch_size": batch_size, "epochs": epochs, "monitor": monitor},
+        "dataset": dataset_metadata,
+        "history": history.history,
     }
 
     with open(metadata_file_path, "w") as json_file:
         json.dump(metadata, json_file)
 
     return metadata
-
-
-def evaluate(model, dataset, batch_size, file_count):
-    steps = file_count // batch_size
-    loss, acc = model.evaluate(dataset, verbose=0, steps=steps)
-    return loss, acc
 
 
 def _parse_args():
@@ -214,12 +220,3 @@ if __name__ == "__main__":
 
     # save model
     save_model(classifier, args.model_dir, model_id)
-
-    # write metadata
-    write_metadata(
-        model_dir=args.model_dir,
-        model_id=model_id,
-        batch_size=args.batch_size,
-        epochs=args.epochs,
-        monitor=args.monitor,
-    )
