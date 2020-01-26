@@ -41,3 +41,7 @@ def create_metrics_dataframe(history: List[dict]) -> pd.DataFrame:
 
 def learning_curves(metric: str, metrics_df: pd.DataFrame):
     return sns.lineplot(x="epoch", y=metric, hue="name", data=metrics_df, legend="full")
+
+
+def save_plot(plot, filename: str):
+    plot.get_figure().savefig(filename)
