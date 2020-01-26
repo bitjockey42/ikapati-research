@@ -6,23 +6,22 @@ from typing import List
 from matplotlib import pyplot as plt
 
 
-def create_metrics_for_dataset_type(history: List[dict], dataset_type: str) -> pd.DataFrame:
+def create_metrics_for_dataset_type(
+    history: List[dict], dataset_type: str
+) -> pd.DataFrame:
     loss_key = "loss"
     accuracy_key = "accuracy"
-    
+
     if dataset_type == "validation":
         loss_key = "val_loss"
         accuracy_key = "val_accuracy"
-    
-    data = {
-        "loss": history[loss_key],
-        "accuracy": history[accuracy_key]
-    }
-    
+
+    data = {"loss": history[loss_key], "accuracy": history[accuracy_key]}
+
     df = pd.DataFrame(data)
     df["epoch"] = df.index
     df["name"] = dataset_type
-    
+
     return df
 
 

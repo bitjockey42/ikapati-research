@@ -13,6 +13,7 @@ from src.data import utils
 
 AUTOTUNE = tf.data.experimental.AUTOTUNE
 
+
 class NumpyEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, np.integer):
