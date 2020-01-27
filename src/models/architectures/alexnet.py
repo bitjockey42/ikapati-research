@@ -75,12 +75,4 @@ def model(num_classes, learning_rate=0.1, activation="linear", padding="same", c
         ]
     )
 
-    model.compile(
-        loss=losses.categorical_crossentropy,
-        optimizer=optimizers.Adam(),
-        metrics=["accuracy"],
-    )
-
-    model.summary()
-
     return model
