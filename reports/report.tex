@@ -22,7 +22,7 @@
 
 \subsection{Project Overview}
 
-Farmers need a way to detect plant disease early on in the planting season without investing too much time manually checking everything themselves.
+One of the greatest challenges in modern farming is the detection of plant diseases. Farmers need a way to detect plant disease early on in the planting season without investing too much time manually checking everything themselves.
 
 For this project, I built a Python library that implements a multi-class classifier that functions as a plant disease detector.
 
@@ -30,7 +30,20 @@ The library includes functionality to do many of the tasks required in machine l
 
 \subsection{Problem Statement}
 
+My main objectives for this project were to build a library that implements plant disease classification and can act as a framework with which to do further research in this subject area. It can be used to complete an entire machine learning pipeline from training to deployment.
+
+To build this library, I needed to:
+
+\begin{enumerate}
+	\item Retrieve the PlantVillage Dataset (\url{https://github.com/spMohanty/PlantVillage-Dataset}).
+	\item Prepare the raw color images from the PlantVillage Dataset for consumption by the model.
+	\item Train the model to classify the different diseases for a given species of plant.
+	\item Save the model as a TensorFlow Lite object for use in an embedded system.
+\end{enumerate}
+
 \subsection{Metrics}
+
+Accuracy and loss were the main metrics used in this project.
 
 \section{Analysis}
 
@@ -45,6 +58,8 @@ The library includes functionality to do many of the tasks required in machine l
 \section{Methodology}
 
 \subsection{Data Preprocessing}
+
+To preprocess the images, 
 
 \subsection{Implementation}
 
