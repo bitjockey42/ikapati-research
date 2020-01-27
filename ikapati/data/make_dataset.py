@@ -7,8 +7,8 @@ from pathlib import Path
 from dotenv import find_dotenv, load_dotenv
 from sklearn.model_selection import train_test_split
 
-from src.data import io
-from src.data import utils
+from ikapati.data import io
+from ikapati.data import utils
 
 logger = logging.getLogger(__name__)
 

@@ -34,7 +34,7 @@ a farmer to manually check each growing plant for disease. It can
 potentially be more cost-effective to diagnose plant diseases with
 automated tools \cite{fujita_basic_2016}.
 
-For this project, I built a Python library that implements a multi-class classifier that functions as a plant disease detector.
+For this project, I built the Python library \textbf{ikapati}, which implements a multi-class classifier that functions as a plant disease detector.
 
 The library includes functionality to do many of the tasks required in machine learning research, among them image preprocessing necessary to prepare the data for classification, scripts to train classifier itself, and utility functions to help evaluate performance.
 
@@ -71,6 +71,8 @@ For this project, the colored photos were used for analysis and training. Due to
 
 \subsection{Exploratory Visualization}
 
+HERE PUT SOME IMAGES
+
 \subsection{Algorithms and Techniques}
 
 A \textbf{Convolutional Neural Network (CNN)} was selected as the classification algorithm due to its demonstrated efficacy in plant disease detection in previous studies \cite{toda_how_2019} \cite{fujita_basic_2016}.
@@ -78,6 +80,7 @@ A \textbf{Convolutional Neural Network (CNN)} was selected as the classification
 The CNN architecture is based on \textbf{AlexNet} \cite{krizhevsky_imagenet_2017} and is comprised of Conv2D (which does 2D convolution), MaxPooling2D (max pooling), and Fully Connected Layers (which are a combination of Dense and Dropout layers).
 
 This describes the layer sequence (the number indicates how many of that same layer repeats until the next one):
+
 
 \begin{itemize}
 	\item Conv2D (3)
@@ -87,7 +90,9 @@ This describes the layer sequence (the number indicates how many of that same la
 	\item Fully-Connected with Dropout (3)
 \end{itemize}
 
+
 These parameters can be tuned/specified at training time:
+
 
 \begin{itemize}
 	\item \textbf{epochs} - the number of epochs to run.
@@ -117,6 +122,28 @@ Preprocessing the data was completed using these steps:
 \end{enumerate}
 
 \subsection{Implementation}
+
+The library was primarily written in Python 3. It can be broken down as such
+
+\begin{itemize}
+	\item{models}
+	\item{data}
+	\item{visualization}
+\end{itemize}
+
+\subsubsection{Data Preparation}
+
+\subsubsection{Training Stage}
+
+The training models were created using TensorFlow 2.0 with the keras functional API.
+
+\subsubsection{Visualization and Metrics Tools}
+
+Utility functions to evaluate model performance were created using seaborn (a high-level API for matplotlib) and pandas.
+
+\subsubsection{Model Saving and Deployment}
+
+Upon training completion, 
 
 \subsection{Refinement}
 
