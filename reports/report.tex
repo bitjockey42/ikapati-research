@@ -67,7 +67,7 @@ are split up into several folders, labelled according to the plant
 species (e.g. Pepper Bell) and whether they are healthy or not (e.g.
 Pepper bell healthy, Pepper bell Bacterial spot).
 
-In this project, the colored 
+For this project, the colored photos were used for analysis and training.
 
 \subsection{Exploratory Visualization}
 
@@ -85,10 +85,11 @@ Toda et al, Fuentes et al, on plant detection which all utilize a CNN as a class
 Preprocessing the data was completed using these steps:
 
 \begin{enumerate}
-	\item Read in image filenames as list and shuffle items.
-	\item Split image dataset into training (80\%), validation (10\%), and test (10\%) datasets.
-	\item Write each dataset into TensorFlow records that contain the raw image and labels as the features.
-	\item Create parser function to read each TensorFlow record batch by batch.
+	\item Shuffle list of image filenames.
+	\item Get labels from filenames.
+	\item Split list of image filenames into training files (80\%), validation (10\%), and testing files (10\%).
+	\item Create a training example for each image file so it can be added to a TFRecord (TensorFlow dataset).
+	\item Create parser function to read each TFRecord batch by batch during training due to hardware limitations (limited RAM, in this case).
 	\item Normalize image pixel values by dividing by 255 (representing the range of values for an RGB image).
 \end{enumerate}
 
