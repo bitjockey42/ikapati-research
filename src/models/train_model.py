@@ -144,8 +144,8 @@ def load_dataset(data_dir, dataset_name, batch_size, num_classes):
 
 
 def save_model(model, model_dir, model_id, start_time):
-    print(f"Saving model {model_id}")
     model_filepath = os.path.join(model_dir, model_id, start_time, "final.h5")
+    print(f"Saving model {model_filepath}")
     model.save(model_filepath)
 
     # Save as tflite model as well
