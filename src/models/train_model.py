@@ -212,7 +212,7 @@ def _parse_args():
     parser.add_argument("--activation", type=str)
 
     # Whether to stop when the monitor reaches a threshold
-    parser.add_argument("--early-stopping", action="store_true", default=False)
+    parser.add_argument("--early_stopping", action="store_true", default=False)
 
     # Specify neural network architecture to use
     parser.add_argument("--architecture", type=str, default="alexnet")
