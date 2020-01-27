@@ -44,6 +44,14 @@ def model(num_classes, architecture="alexnet", learning_rate=0.1, activation="li
     else:
         raise NotImplementedError(f"{architecture} not implemented")
 
+    model.compile(
+        loss=losses.categorical_crossentropy,
+        optimizer=optimizers.Adam(),
+        metrics=["accuracy"],
+    )
+
+    model.summary()
+    
     return model
 
 
