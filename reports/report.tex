@@ -73,6 +73,20 @@ For this project, the colored photos were used for analysis and training. Due to
 
 \subsection{Algorithms and Techniques}
 
+A Convolutional Neural Network (CNN) was selected as the classification algorithm due to its demonstrated efficacy in plant disease detection in previous studies \cite{toda_how_2019}\cite{fujita_basic_2016}.
+
+The CNN architecture is based on AlexNet\cite{krizhevsky_imagenet_2017} and is comprised of Conv2D (which does 2D convolution), MaxPooling2D (max pooling), and Fully Connected Layers (which are a combination of Dense and Dropout layers).
+
+This describes the layer sequence (the number indicates how many of that same layer repeats until the next one):
+
+\begin{itemize}
+	\item Conv2D (3)
+	\item MaxPooling2D (1)
+	\item Conv2D (2)
+	\item MaxPooling2D (1)
+	\item Fully-Connected with Dropout (3)
+\end{itemize}
+
 \subsection{Benchmark}
 
 The benchmark for the classifier will be the results obtained by previous studies by
