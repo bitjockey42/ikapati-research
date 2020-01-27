@@ -8,8 +8,8 @@ from typing import List
 import tensorflow as tf
 import numpy as np
 
-from src.data.image_processing import preprocess_image, image_example, normalize
-from src.data import utils
+from ikapati.data.image_processing import preprocess_image, image_example, normalize
+from ikapati.data import utils
 
 AUTOTUNE = tf.data.experimental.AUTOTUNE
 
