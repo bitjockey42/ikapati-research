@@ -37,7 +37,7 @@ from src.data import io
 from src.models import architectures
 
 
-def model(num_classes, architecture="alexnet", learning_rate=0.1, activation="linear", padding="same"):
+def model(num_classes, architecture="alexnet", learning_rate=0.001, activation="linear", padding="same"):
     """ Select an architecture and create a network from that """
     if architecture == "alexnet":
         model = architectures.alexnet.model(num_classes, learning_rate=learning_rate, activation=activation, padding=padding)
@@ -46,12 +46,12 @@ def model(num_classes, architecture="alexnet", learning_rate=0.1, activation="li
 
     model.compile(
         loss=losses.categorical_crossentropy,
-        optimizer=optimizers.Adam(),
+        optimizer=optimizers.Adam(learning_rate=learning_rate),
         metrics=["accuracy"],
     )
 
     model.summary()
-    
+
     return model
 
 
@@ -105,7 +105,7 @@ def train(
     epochs,
     monitor,
     start_time,
-    learning_rate=0.1,
+    learning_rate=0.001,
     activation="linear",
     early_stopping=False,
 ):
@@ -214,7 +214,7 @@ def _parse_args():
     # hyperparameters sent by the client are passed as command-line arguments to the script.
     parser.add_argument("--epochs", type=int, default=10)
     parser.add_argument("--batch_size", type=int, default=100)
-    parser.add_argument("--learning_rate", type=float, default=0.1)
+    parser.add_argument("--learning_rate", type=float, default=0.001)
 
     # The activation function to try, e.g "linear"
     parser.add_argument("--activation", type=str)
