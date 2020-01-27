@@ -29,7 +29,6 @@ def model(num_classes, learning_rate=0.1, activation="linear", padding="same", c
                 padding=padding,
                 activation=activation,
             ),
-            layers.MaxPooling2D(pool_size=(3, 3), strides=(2, 2), padding=padding),
             # Layer 2
             layers.Conv2D(
                 192,
@@ -38,7 +37,6 @@ def model(num_classes, learning_rate=0.1, activation="linear", padding="same", c
                 activation=activation,
                 padding=padding,
             ),
-            layers.MaxPooling2D(pool_size=(3, 3), strides=(2, 2), padding=padding),
             # Layer 3
             layers.Conv2D(
                 384,
@@ -46,6 +44,7 @@ def model(num_classes, learning_rate=0.1, activation="linear", padding="same", c
                 activation=activation,
                 padding=padding,
             ),
+            layers.MaxPooling2D(pool_size=(3, 3), strides=(2, 2), padding=padding),
             # Layer 4
             layers.Conv2D(
                 256,
