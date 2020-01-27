@@ -73,9 +73,9 @@ For this project, the colored photos were used for analysis and training. Due to
 
 \subsection{Algorithms and Techniques}
 
-A Convolutional Neural Network (CNN) was selected as the classification algorithm due to its demonstrated efficacy in plant disease detection in previous studies \cite{toda_how_2019}\cite{fujita_basic_2016}.
+A \textbf{Convolutional Neural Network (CNN)} was selected as the classification algorithm due to its demonstrated efficacy in plant disease detection in previous studies \cite{toda_how_2019} \cite{fujita_basic_2016}.
 
-The CNN architecture is based on AlexNet\cite{krizhevsky_imagenet_2017} and is comprised of Conv2D (which does 2D convolution), MaxPooling2D (max pooling), and Fully Connected Layers (which are a combination of Dense and Dropout layers).
+The CNN architecture is based on \textbf{AlexNet} \cite{krizhevsky_imagenet_2017} and is comprised of Conv2D (which does 2D convolution), MaxPooling2D (max pooling), and Fully Connected Layers (which are a combination of Dense and Dropout layers).
 
 This describes the layer sequence (the number indicates how many of that same layer repeats until the next one):
 
@@ -85,6 +85,15 @@ This describes the layer sequence (the number indicates how many of that same la
 	\item Conv2D (2)
 	\item MaxPooling2D (1)
 	\item Fully-Connected with Dropout (3)
+\end{itemize}
+
+These parameters can be tuned/specified at training time:
+
+\begin{itemize}
+	\item \textbf{epochs} - the number of epochs to run.
+	\item \textbf{learning rate} - the learning rate (optional for dynamic tuning).
+	\item \textbf{batch size} - the number of training examples in each batch.
+	\item \textbf{activation} - the activation function to use, e.g. "relu".
 \end{itemize}
 
 \subsection{Benchmark}
