@@ -7,4 +7,9 @@ setup(
     description='Plant disease detection',
     author='Allyson Julian',
     license='BSD-3',
+    entry_points={
+        'console_scripts': [
+            'ikapati-data=ikapati.data.make_dataset:main',
+        ]
+    },
 )
