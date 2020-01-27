@@ -77,17 +77,16 @@ HERE PUT SOME IMAGES
 
 A \textbf{Convolutional Neural Network (CNN)} was selected as the classification algorithm due to its demonstrated efficacy in plant disease detection in previous studies \cite{toda_how_2019} \cite{fujita_basic_2016}.
 
-The CNN architecture is based on \textbf{AlexNet} \cite{krizhevsky_imagenet_2017} and is comprised of Conv2D (which does 2D convolution), MaxPooling2D (max pooling), and Fully Connected Layers (which are a combination of Dense and Dropout layers).
+The CNN architecture is based on \textbf{AlexNet} \cite{krizhevsky_imagenet_2017} and is comprised of Conv2D (which does convolution), MaxPooling2D (max pooling), and FCD (which are a combination of Dense and Dropout layers).
 
 This describes the layer sequence (the number indicates how many of that same layer repeats until the next one):
 
-
 \begin{itemize}
-	\item Conv2D (3)
-	\item MaxPooling2D (1)
-	\item Conv2D (2)
-	\item MaxPooling2D (1)
-	\item Fully-Connected with Dropout (3)
+	\item Conv2D (3) - Convolution Layer
+	\item MaxPooling2D (1) - Max Pooling Layer
+	\item Conv2D (2) - Convolution Layer
+	\item MaxPooling2D (1) - Max Pooling Layer
+	\item FCD (3) - Fully Connected Layer w/ Dropout 
 \end{itemize}
 
 
@@ -103,8 +102,10 @@ These parameters can be tuned/specified at training time:
 
 \subsection{Benchmark}
 
-The benchmark for the classifier will be the results obtained by previous studies by
+The benchmark for the classifier were results obtained by previous studies by
 Toda et al, Fuentes et al, on plant detection which all utilize a CNN as a classifier\cite{toda_how_2019} \cite{fuentes_robust_2017}.
+
+
 
 \section{Methodology}
 
@@ -123,19 +124,33 @@ Preprocessing the data was completed using these steps:
 
 \subsection{Implementation}
 
-The library was primarily written in Python 3. It can be broken down as such
+The library was primarily written in Python 3 and primarily utilizes TensorFlow 2.0 (tf) for training.
+
+The modules for \textbf{ikapati} can be broken down as such:
 
 \begin{itemize}
-	\item{models}
-	\item{data}
-	\item{visualization}
+	\item \textbf{models} - these contain the training scripts and tools.
+	\item \textbf{data} - this has the utility functions used to preprocess the data.
+	\item \textbf{visualization} - this contains utility functions to help visualize and evaluate model performance.
 \end{itemize}
 
 \subsubsection{Data Preparation}
 
+The datasets were prepared using scikit-learn and TensorFlow 2.0, and then saved as TFRecords:
+
+\begin{enumerate}
+	\item Get the filenames of all the images that match the specified plant species, in this case, "Tomato".
+	\item Follow the steps outlined in the \textbf{Data Preprocessing} section.
+	\item Put each subset of training examples (training, validation, and test) into separate TFRecords (train.tfrecord, eval.tfrecord, test.tfrecord).
+\end{enumerate}
+
 \subsubsection{Training Stage}
 
-The training models were created using TensorFlow 2.0 with the keras functional API.
+The training models were created using TensorFlow 2.0 with the keras functional API. As described in the section \textbf{Algorithms and Techniques}, CNN was chosen as the classifier, with AlexNet being the basis for the neural network architecture.
+
+\begin{enumerate}
+	\item Create a keras Sequential model, with the layers in this order: 3 Conv2D, 1 MaxPooling2D, 2 Conv2D, 1 MaxPooling2D, 3 FCDs, 1 Output Layer.
+\end{enumerate}
 
 \subsubsection{Visualization and Metrics Tools}
 
