@@ -22,7 +22,17 @@
 
 \subsection{Project Overview}
 
-One of the greatest challenges in modern farming is the detection of plant diseases. Farmers need a way to detect plant disease early on in the planting season without investing too much time manually checking everything themselves.
+Advances in agricultural technology over the past 30 years have made
+it easier for farmers to manage their farms, particularly when the
+farms are comprised of multiple fields greater than 1000 acres in
+size. The use of GPS on aerial imagery, drones, etc. have been instrumental
+in precision agriculture \cite{liakos_machine_2018}.
+
+But one of the challenges of modern farming is the detection of plant
+diseases. For large farms in particular, it is time-consuming for
+a farmer to manually check each growing plant for disease. It can
+potentially be more cost-effective to diagnose plant diseases with
+automated tools \cite{fujita_basic_2016}.
 
 For this project, I built a Python library that implements a multi-class classifier that functions as a plant disease detector.
 
@@ -49,17 +59,38 @@ Accuracy and loss were the main metrics used in this project.
 
 \subsection{Data Exploration}
 
+The main datasets used were obtained from the PlantVillage Dataset: \url{https://github.com/spMohanty/PlantVillage-Dataset}
+
+The dataset consists of 20,638 images each of which have the dimensions
+256 by 256 pixels and are all colored, non-greyscale JPEGs. The images
+are split up into several folders, labelled according to the plant
+species (e.g. Pepper Bell) and whether they are healthy or not (e.g.
+Pepper bell healthy, Pepper bell Bacterial spot).
+
+In this project, the colored 
+
 \subsection{Exploratory Visualization}
 
 \subsection{Algorithms and Techniques}
 
 \subsection{Benchmark}
 
+The benchmark for the classifier will be the results obtained by previous studies by
+Toda et al, Fuentes et al, on plant detection which all utilize a CNN as a classifier\cite{toda_how_2019} \cite{fuentes_robust_2017}.
+
 \section{Methodology}
 
 \subsection{Data Preprocessing}
 
-Preprocessing the data was completed using the.
+Preprocessing the data was completed using these steps:
+
+\begin{enumerate}
+	\item Read in image filenames as list and shuffle items.
+	\item Split image dataset into training (80\%), validation (10\%), and test (10\%) datasets.
+	\item Write each dataset into TensorFlow records that contain the raw image and labels as the features.
+	\item Create parser function to read each TensorFlow record batch by batch.
+	\item Normalize image pixel values by dividing by 255 (representing the range of values for an RGB image).
+\end{enumerate}
 
 \subsection{Implementation}
 
@@ -67,7 +98,6 @@ Preprocessing the data was completed using the.
 
 \section{Results}
 
-\subsection{Model Evaluation and Validation}
 
 \subsection{Justification}
 
@@ -83,3 +113,5 @@ Preprocessing the data was completed using the.
 \bibliography{citations}
 
 \end{document}
+
+\subsection{Model Evaluation and Validation}
