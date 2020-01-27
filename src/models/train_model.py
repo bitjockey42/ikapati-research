@@ -38,35 +38,42 @@ from src.data import io
 
 def model(num_classes, learning_rate=0.1, activation="linear"):
     """Generate a simple model"""
+    padding = "same"
     print(f"learning_rate: {learning_rate} - activation: {activation}")
     model = keras.Sequential(
         [
             # Layer 1
             layers.Conv2D(
-                32,
-                kernel_size=(3, 3),
-                activation=activation,
+                96,
+                kernel_size=(11, 11),
                 input_shape=(256, 256, 3),
-                padding="same",
+                strides=(4,4),
+                padding=padding,
+                activation=activation,
             ),
-            layers.LeakyReLU(alpha=learning_rate),
-            layers.MaxPooling2D((2, 2), padding="same"),
-            layers.Dropout(0.25),
+            layers.MaxPooling2D(pool_size=(2, 2), strides=(2, 2), padding=padding),
             # Layer 2
-            layers.Conv2D(64, (3, 3), activation=activation, padding="same"),
-            layers.LeakyReLU(alpha=learning_rate),
-            layers.MaxPooling2D(pool_size=(2, 2), padding="same"),
-            layers.Dropout(0.25),
+            layers.Conv2D(256, kernel_size=(11, 11), strides=(2, 2), activation=activation, padding=padding),
+            layers.MaxPooling2D(pool_size=(2, 2), strides=(2, 2), padding=padding),
             # Layer 3
-            layers.Conv2D(128, (3, 3), activation=activation, padding="same"),
-            layers.LeakyReLU(alpha=learning_rate),
-            layers.MaxPooling2D(pool_size=(2, 2), padding="same"),
-            layers.Dropout(0.4),
-            # FC
+            layers.Conv2D(384, kernel_size=(3, 3), strides=(2, 2), activation=activation, padding=padding),
+            # Layer 4
+            layers.Conv2D(384, kernel_size=(3, 3), strides=(1, 1), activation=activation, padding=padding),
+            # Layer 5
+            layers.Conv2D(256, kernel_size=(3, 3), strides=(1, 1), activation=activation, padding=padding),
+            layers.MaxPooling2D(pool_size=(2, 2), strides=(2, 2), padding=padding),
+            # Pass to Fully Connected (FC) Layers
             layers.Flatten(),
-            layers.Dense(1024, activation=activation),
-            layers.LeakyReLU(alpha=learning_rate),
-            layers.Dropout(0.3),
+            # FC 1
+            layers.Dense(4096, input_shape=(256 * 256 * 3,), activation=activation),
+            layers.Dropout(0.4),
+            # FC 2
+            layers.Dense(4096, activation=activation),
+            layers.Dropout(0.4),
+            # FC 3
+            layers.Dense(4096, activation=activation),
+            layers.Dropout(0.4),
+            # Output Layer
             layers.Dense(num_classes, activation="softmax"),
         ]
     )
