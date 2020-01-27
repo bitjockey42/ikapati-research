@@ -219,6 +219,7 @@ def train(
         dataset_metadata=metadata,
         history=history,
         start_time=start_time,
+        activation=activation,
     )
 
     return classifier, history, model_id
@@ -233,6 +234,7 @@ def write_metadata(
     dataset_metadata,
     history,
     start_time,
+    activation,
 ):
     print("Write metadata for model")
     metadata_file_path = os.path.join(model_dir, model_id, start_time, "metadata.json")
@@ -241,7 +243,7 @@ def write_metadata(
     metadata = {
         "id": model_id,
         "created_date": current_datetime.strftime("%Y-%m-%d %T%z"),
-        "arguments": {"batch_size": batch_size, "epochs": epochs, "monitor": monitor},
+        "arguments": {"batch_size": batch_size, "epochs": epochs, "monitor": monitor, "activation": activation},
         "dataset": dataset_metadata,
         "history": history.history,
     }
