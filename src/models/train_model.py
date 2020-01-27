@@ -185,6 +185,10 @@ def train(
     if not os.path.exists(model_dir_path):
         os.makedirs(model_dir_path)
 
+    # Write to log
+    with open(os.path.join(model_dir, model_id, "training.log"), "a+") as log_file:
+        log_file.write(f"{activation}\t{model_dir_path}\n")
+
     # Load data
     train_dataset = load_dataset(train_dir, "train", batch_size, num_classes)
     eval_dataset = load_dataset(train_dir, "eval", batch_size, num_classes)
@@ -220,6 +224,7 @@ def train(
         history=history,
         start_time=start_time,
         activation=activation,
+        early_stopping=early_stopping,
     )
 
     return classifier, history, model_id
@@ -235,15 +240,21 @@ def write_metadata(
     history,
     start_time,
     activation,
+    early_stopping,
 ):
     print("Write metadata for model")
     metadata_file_path = os.path.join(model_dir, model_id, start_time, "metadata.json")
-    current_datetime = datetime.utcnow()
 
     metadata = {
         "id": model_id,
-        "created_date": current_datetime.strftime("%Y-%m-%d %T%z"),
-        "arguments": {"batch_size": batch_size, "epochs": epochs, "monitor": monitor, "activation": activation},
+        "start_time": start_time,
+        "arguments": {
+            "batch_size": batch_size,
+            "epochs": epochs,
+            "monitor": monitor,
+            "activation": activation,
+            "early_stopping": early_stopping,
+        },
         "dataset": dataset_metadata,
         "history": history.history,
     }
@@ -293,7 +304,7 @@ def _parse_args():
 
 if __name__ == "__main__":
     args, unknown = _parse_args()
-    start_time = datetime.utcnow().strftime("%Y-%m-%d__%H_%M")
+    start_time = datetime.utcnow().strftime("%Y-%m-%d__%H_%M%S")
 
     classifier, history, model_id = train(
         train_dir=args.train,
