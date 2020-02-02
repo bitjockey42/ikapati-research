@@ -12,7 +12,7 @@ SRC_DIR = ikapati
 #################################################################################
 # AWS Variables - These should be set as environment variables                  #
 #################################################################################
-BUCKET = ${S3_BUCKET} 
+BUCKET = ${S3_BUCKET}
 PROFILE = ${AWS_PROFILE}
 
 ifeq (,$(shell which conda))
