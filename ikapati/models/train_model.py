@@ -19,9 +19,6 @@ import tempfile
 from datetime import datetime
 from uuid import uuid4
 
-import tensorflow_docs as tfdocs
-import tensorflow_docs.modeling
-import tensorflow_docs.plots
 import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import (

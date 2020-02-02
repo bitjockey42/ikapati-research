@@ -15,7 +15,7 @@ import numpy as np
 import tensorflow as tf
 from tensorflow import keras
 
-from src.data.image_processing import preprocess_image
+from ikapati.data.image_processing import preprocess_image
 
 
 def get_labels(filename):

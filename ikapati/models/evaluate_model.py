@@ -6,4 +6,4 @@ import tempfile
 import tensorflow as tf
 import numpy as np
 
-from src.data import io
+from ikapati.data import io

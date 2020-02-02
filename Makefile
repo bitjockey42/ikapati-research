@@ -5,10 +5,14 @@
 #################################################################################
 
 PROJECT_DIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
-BUCKET = ikapati-data
-PROFILE = default
 PROJECT_NAME = ikapati
 PYTHON_INTERPRETER = python3
+
+#################################################################################
+# AWS Variables - These should be set as environment variables                  #
+#################################################################################
+BUCKET = ${S3_BUCKET} 
+PROFILE = ${AWS_PROFILE}
 
 ifeq (,$(shell which conda))
 HAS_CONDA=False
@@ -25,9 +29,9 @@ requirements: test_environment
 	$(PYTHON_INTERPRETER) -m pip install -U pip setuptools wheel
 	$(PYTHON_INTERPRETER) -m pip install -r requirements.txt
 
-## Make Dataset
+## Make Dataset. Specify plant species e.g. Tomato
 data: requirements
-	$(PYTHON_INTERPRETER) src/data/make_dataset.py data/raw data/processed
+	$(PYTHON_INTERPRETER) ikapati/data/make_dataset.py data/raw data/processed --species $(SPECIES)
 
 ## Delete all compiled Python files
 clean:
