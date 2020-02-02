@@ -7,6 +7,7 @@
 PROJECT_DIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 PROJECT_NAME = ikapati
 PYTHON_INTERPRETER = python3
+SRC_DIR = ikapati
 
 #################################################################################
 # AWS Variables - These should be set as environment variables                  #
@@ -31,7 +32,7 @@ requirements: test_environment
 
 ## Make Dataset. Specify plant species e.g. Tomato
 data: requirements
-	$(PYTHON_INTERPRETER) ikapati/data/make_dataset.py data/raw data/processed --species $(SPECIES)
+	$(PYTHON_INTERPRETER) $(SRC_DIR)/data/make_dataset.py data/raw data/processed --species $(SPECIES)
 
 ## Delete all compiled Python files
 clean:
@@ -40,7 +41,11 @@ clean:
 
 ## Lint using flake8
 lint:
-	flake8 src
+	flake8 $(SRC_DIR)
+
+## Format using black
+black:
+	black $(SRC_DIR)
 
 ## Upload Data to S3
 sync_data_to_s3:
