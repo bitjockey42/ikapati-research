@@ -88,3 +88,6 @@ target/
 # Mypy cache
 .mypy_cache/
 *.npy
+
+# This was taking up too much space
+models/
