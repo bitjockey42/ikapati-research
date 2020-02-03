@@ -38,6 +38,10 @@ def get_label_id(prediction):
     return np.argmax(prediction)
 
 
+def get_probability(prediction):
+    return np.max(prediction)
+
+
 def load_tflite_model(model_dir):
     model_path = os.path.join(model_dir, "model.tflite")
     print(f"Loading {model_path}")
@@ -68,9 +72,10 @@ def main(model_dir, input_filename):
     interpreter.invoke()
     predictions = interpreter.get_tensor(output_details[0]["index"])
     label_id = get_label_id(predictions[0])
+    probability = get_probability(predictions[0])
 
     # Show result
-    print(f"Detected: {class_names[label_id]}")
+    print(f"I detected {class_names[label_id]} for this input file, with a probability of {probability}")
 
 
 if __name__ == "__main__":
