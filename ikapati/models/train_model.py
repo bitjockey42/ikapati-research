@@ -127,10 +127,7 @@ def train(
 
     # Write to log
     with open(os.path.join(model_dir, model_id, "training.log"), "a+") as log_file:
-        if dropout:
-            text = f"{activation}-dropout\t{model_dir_path}\n"
-        else:
-            text = f"{activation}\t{model_dir_path}\n"
+        text = f"{start_time}\t{activation}\t{model_dir_path}\tlearning_rate={learning_rate}\tdropout={dropout}\tepochs={epochs}\tbatch_size={batch_size}\n"
         log_file.write(text)
 
     # Load data
