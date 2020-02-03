@@ -70,7 +70,7 @@ Alternatively:
 
 ```
 conda install pip pandas numpy
-conda install -c conda-forge pillow tensorflow seaborn scikit-learn
+conda install -c conda-forge pillow tensorflow-gpu seaborn scikit-learn
 ```
 
 Then install requirements:
