@@ -139,7 +139,6 @@ def train(
     if not os.path.exists(model_dir_path):
         os.makedirs(model_dir_path)
     
-
     # Load data
     train_dataset = load_dataset(train_dir, "train", batch_size, num_classes)
     eval_dataset = load_dataset(train_dir, "eval", batch_size, num_classes)
@@ -183,10 +182,16 @@ def train(
     )
 
     # Write to log
-    with open(os.path.join(model_dir, model_id, "training.log"), "a+") as log_file:
+    logfile_path = os.path.join(model_dir, model_id, "training.log")
+    logfile_exists = os.path.isfile(logfile_path)
+
+    with open(logfile_path, "a+") as log_file:
         header = ["start_time", "end_time", "activation", "model_dir_path", "learning_rate", "dropout", "epochs", "batch_size"]
         writer = csv.DictWriter(log_file, fieldnames=header)
-        writer.writeheader()
+
+        if not logfile_exists:
+            writer.writeheader()
+
         writer.writerow({
             "start_time": start_time,
             "end_time": end_time,
