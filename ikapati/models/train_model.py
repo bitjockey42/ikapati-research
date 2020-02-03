@@ -37,10 +37,10 @@ from ikapati.data import io
 from ikapati.models import architectures
 
 
-def model(num_classes, architecture="alexnet", learning_rate=0.001, activation="linear", padding="same"):
+def model(num_classes, architecture="alexnet", learning_rate=0.001, activation="linear", padding="same", dropout=False):
     """ Select an architecture and create a network from that """
     if architecture == "alexnet":
-        model = architectures.alexnet.model(num_classes, learning_rate=learning_rate, activation=activation, padding=padding)
+        model = architectures.alexnet.model(num_classes, learning_rate=learning_rate, activation=activation, padding=padding, dropout=dropout)
     else:
         raise NotImplementedError(f"{architecture} not implemented")
 
@@ -108,8 +108,8 @@ def train(
     learning_rate=0.001,
     activation="linear",
     early_stopping=False,
+    dropout=False,
 ):
-
     # Set up logs
     logdir = pathlib.Path(tempfile.mkdtemp()) / "tensorboard_logs"
     shutil.rmtree(logdir, ignore_errors=True)
@@ -127,14 +127,18 @@ def train(
 
     # Write to log
     with open(os.path.join(model_dir, model_id, "training.log"), "a+") as log_file:
-        log_file.write(f"{activation}\t{model_dir_path}\n")
+        if dropout:
+            text = f"{activation}-dropout\t{model_dir_path}\n"
+        else:
+            text = f"{activation}\t{model_dir_path}\n"
+        log_file.write(text)
 
     # Load data
     train_dataset = load_dataset(train_dir, "train", batch_size, num_classes)
     eval_dataset = load_dataset(train_dir, "eval", batch_size, num_classes)
 
     # Create the model
-    classifier = model(num_classes, architecture=architecture, learning_rate=learning_rate, activation=activation)
+    classifier = model(num_classes, architecture=architecture, learning_rate=learning_rate, activation=activation, dropout=dropout)
 
     # Steps
     steps = metadata["file_counts"]["train"] // batch_size
@@ -166,6 +170,7 @@ def train(
         start_time=start_time,
         activation=activation,
         early_stopping=early_stopping,
+        dropout=dropout,
     )
 
     return classifier, history, model_id
@@ -183,6 +188,7 @@ def write_metadata(
     start_time,
     activation,
     early_stopping,
+    dropout,
 ):
     print("Write metadata for model")
     metadata_file_path = os.path.join(model_dir, model_id, start_time, "metadata.json")
@@ -197,6 +203,7 @@ def write_metadata(
             "activation": activation,
             "early_stopping": early_stopping,
             "architecture": architecture,
+            "dropout": dropout,
         },
         "dataset": dataset_metadata,
         "history": history.history,
@@ -224,6 +231,9 @@ def _parse_args():
 
     # Specify neural network architecture to use
     parser.add_argument("--architecture", type=str, default="alexnet")
+
+    # Specify whether to use dropout
+    parser.add_argument("--dropout", action="store_true", default=False)
 
     # Data, model, and output directories
     # model_dir is always passed in from SageMaker. By default this is a S3 path under the default bucket.
@@ -263,6 +273,7 @@ if __name__ == "__main__":
         learning_rate=args.learning_rate,
         activation=args.activation,
         early_stopping=args.early_stopping,
+        dropout=args.dropout,
     )
 
     # save model
