@@ -29,10 +29,15 @@ def progress(count, total, status=""):
 def get_folder_paths(data_dir_path: str, species: List[str]) -> List[pathlib.Path]:
     """ Get folder paths that match the species """
     data_dir = pathlib.Path(data_dir_path)
+
+    if "all" in species:
+        return sorted(list(data_dir.glob(f"*/")))
+
     folder_paths = []
     for spec in species:
         folder_paths.extend(list(data_dir.glob(f"{spec}*/")))
-    return folder_paths
+
+    return sorted(folder_paths)
 
 
 def get_image_paths(
@@ -40,11 +45,15 @@ def get_image_paths(
 ) -> List[str]:
     """ Get image file paths that match species and file extension """
     data_dir = pathlib.Path(data_dir_path)
+
+    if "all" in species:
+        return sorted(list(map(str, data_dir.glob(f"*/*.{file_ext}"))))
+
     image_paths = []
     for spec in species:
         paths = list(map(str, data_dir.glob(f"{spec}*/*.{file_ext}")))
         image_paths.extend(paths)
-    return image_paths 
+    return sorted(image_paths)
 
 
 def get_label(file_path: str, class_names: List[str]) -> Tuple[List[int], str]:
@@ -60,6 +69,10 @@ def get_label(file_path: str, class_names: List[str]) -> Tuple[List[int], str]:
 def get_class_names(data_dir_path: str, species: List[str]) -> List[str]:
     """ Get the class names from the data dir paths """
     data_dir = pathlib.Path(data_dir_path)
+
+    if "all" in species:
+        return sorted([item.name for item in data_dir.glob(f"*")])
+
     class_names = []
     for spec in species:
         class_names.extend([item.name for item in data_dir.glob(f"{spec}*")])

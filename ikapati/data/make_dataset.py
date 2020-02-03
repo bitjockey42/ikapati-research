@@ -46,9 +46,8 @@ def main(species, data_dir, output_dir, file_ext):
     logger.info("making final data set from raw data")
     print(species)
 
-    if species is not None:
-        species_names = "_".join(sorted(species))
-        output_dir = os.path.join(output_dir, species_names)
+    species_names = "_".join(sorted(species))
+    output_dir = os.path.join(output_dir, species_names)
 
     if not os.path.isdir(output_dir):
         os.makedirs(output_dir)
