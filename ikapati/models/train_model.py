@@ -186,6 +186,7 @@ def train(
     with open(os.path.join(model_dir, model_id, "training.log"), "a+") as log_file:
         header = ["start_time", "end_time", "activation", "model_dir_path", "learning_rate", "dropout", "epochs", "batch_size"]
         writer = csv.DictWriter(log_file, fieldnames=header)
+        writer.writeheader()
         writer.writerow({
             "start_time": start_time,
             "end_time": end_time,
