@@ -62,6 +62,7 @@ def _get_callbacks(early_stopping, save_checkpoints, start_time, logdir, monitor
     ]
 
     if early_stopping:
+        print("Early stopping")
         _callbacks.append(
             keras.callbacks.EarlyStopping(
                 # Stop training when monitor (e.g. `val_loss`) is no longer improving
@@ -75,6 +76,7 @@ def _get_callbacks(early_stopping, save_checkpoints, start_time, logdir, monitor
         )
 
     if save_checkpoints:
+        print("Saving checkpoints")
         _callbacks.append(
             keras.callbacks.ModelCheckpoint(
                 filepath=os.path.join(model_dir, model_id, start_time, "{epoch}.h5"),
@@ -84,7 +86,6 @@ def _get_callbacks(early_stopping, save_checkpoints, start_time, logdir, monitor
             ),
         )
 
-    
     _callbacks.append(keras.callbacks.TensorBoard(logdir))
 
     return _callbacks
@@ -149,10 +150,15 @@ def train(
     # Steps
     steps = metadata["file_counts"]["train"] // batch_size
     validation_steps = metadata["file_counts"]["eval"] // batch_size
-
-    callbacks = None
-    if early_stopping:
-        callbacks = _get_callbacks(early_stopping, save_checkpoints, start_time, logdir, monitor, model_dir, model_id)
+    callbacks = _get_callbacks(
+        early_stopping=early_stopping,
+        save_checkpoints=save_checkpoints,
+        start_time=start_time,
+        logdir=logdir,
+        monitor=monitor,
+        model_dir=model_dir,
+        model_id=model_id
+    )
 
     # Train
     history = classifier.fit(
