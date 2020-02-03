@@ -179,6 +179,7 @@ def train(
         activation=activation,
         early_stopping=early_stopping,
         dropout=dropout,
+        learning_rate=learning_rate,
     )
 
     # Write to log
@@ -220,6 +221,7 @@ def write_metadata(
     activation,
     early_stopping,
     dropout,
+    learning_rate,
 ):
     print("Write metadata for model")
     metadata_file_path = os.path.join(model_dir, model_id, start_time, "metadata.json")
@@ -236,6 +238,7 @@ def write_metadata(
             "early_stopping": early_stopping,
             "architecture": architecture,
             "dropout": dropout,
+            "learning_rate": learning_rate,
         },
         "dataset": dataset_metadata,
         "history": history.history,
