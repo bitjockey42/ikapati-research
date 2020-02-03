@@ -189,7 +189,7 @@ def train(
     )
 
     # Write to log
-    logfile_path = os.path.join(model_dir, model_id, "training.log")
+    logfile_path = os.path.join(model_dir, model_id, "training.csv")
     logfile_exists = os.path.isfile(logfile_path)
 
     with open(logfile_path, "a+") as log_file:
