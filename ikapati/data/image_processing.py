@@ -8,11 +8,12 @@ import numpy as np
 from PIL import Image
 
 
-def preprocess_image(filename, normalize=True, standardize=True):
-    image = load_image(filename)
-    pixel_values = convert_to_pixel_values(image, normalize, standardize)
-    pixel_values.reshape(-1, image.size[0], image.size[1], 1)
-    return pixel_values
+def preprocess_image(filename):
+    image_raw = open(filename, "rb").read()
+    image = tf.image.decode_jpeg(image_raw, channels=3)
+    image = tf.reshape(image, [256, 256, 3])
+    image, _ = normalize(image, None)
+    return image
 
 
 def load_image(filename):

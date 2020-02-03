@@ -15,51 +15,62 @@ import numpy as np
 import tensorflow as tf
 from tensorflow import keras
 
+from ikapati.data.io import read_metadata
 from ikapati.data.image_processing import preprocess_image
 
 
-def get_labels(filename):
-    with open(filename, "r") as f:
-        labels = f.readlines()
-        return list(map(str.strip, labels))
+def prepare_input_data(input_filename):
+    image = preprocess_image(input_filename)
+    # This is done because tf expects the input to be in a list
+    input_data = tf.reshape(image, [1, 256, 256, 3])
+    return input_data
+
+
+def get_class_names(model_dir):
+    metadata_file_path = os.path.join(model_dir, "metadata.json")
+    metadata = read_metadata(metadata_file_path)
+    species = metadata["dataset"]["species"]
+    print(f"{species}")
+    return metadata["dataset"]["class_names"]
 
 
 def get_label_id(prediction):
     return np.argmax(prediction)
 
 
-def load_tflite_model(filename):
-    interpreter = tf.lite.Interpreter(model_path=filename)
+def load_tflite_model(model_dir):
+    model_path = os.path.join(model_dir, "model.tflite")
+    print(f"Loading {model_path}")
+    interpreter = tf.lite.Interpreter(model_path=model_path)
     interpreter.allocate_tensors()
     return interpreter
 
 
 @click.command()
-@click.argument("model_filename", type=click.Path())
-@click.option("--input-filename", type=click.Path())
-@click.option("--labels-filename", type=click.Path())
-def main(model_filename, input_filename, labels_filename):
-    # Load labels
-    labels = get_labels(labels_filename)
+@click.argument("model_dir", type=click.Path())
+@click.option("--input_filename", type=click.Path())
+def main(model_dir, input_filename):
+    # Load class names
+    class_names = get_class_names(model_dir)
 
     # Load saved tflite model
-    interpreter = load_tflite_model(model_filename)
+    interpreter = load_tflite_model(model_dir)
 
     # Preprocess image
-    input_data = preprocess_image(input_filename, normalize=True, standardize=True)
+    input_data = prepare_input_data(input_filename)
 
     # Get input and output tensors.
     input_details = interpreter.get_input_details()
     output_details = interpreter.get_output_details()
 
     # Make a prediction
-    interpreter.set_tensor(input_details[0]["index"], np.array([input_data]))
+    interpreter.set_tensor(input_details[0]["index"], input_data)
     interpreter.invoke()
     predictions = interpreter.get_tensor(output_details[0]["index"])
     label_id = get_label_id(predictions[0])
 
     # Show result
-    print(f"Detected: {labels[label_id]}")
+    print(f"Detected: {class_names[label_id]}")
 
 
 if __name__ == "__main__":
