@@ -15,6 +15,7 @@ import json
 import pathlib
 import shutil
 import tempfile
+import csv
 
 from datetime import datetime
 from uuid import uuid4
@@ -124,11 +125,7 @@ def train(
     model_dir_path = os.path.join(model_dir, model_id, start_time)
     if not os.path.exists(model_dir_path):
         os.makedirs(model_dir_path)
-
-    # Write to log
-    with open(os.path.join(model_dir, model_id, "training.log"), "a+") as log_file:
-        text = f"{start_time}\t{activation}\t{model_dir_path}\tlearning_rate={learning_rate}\tdropout={dropout}\tepochs={epochs}\tbatch_size={batch_size}\n"
-        log_file.write(text)
+    
 
     # Load data
     train_dataset = load_dataset(train_dir, "train", batch_size, num_classes)
@@ -154,6 +151,7 @@ def train(
         validation_steps=validation_steps,
         callbacks=callbacks,
     )
+    end_time = datetime.utcnow().strftime("%Y-%m-%d__%H_%M%S")
 
     write_metadata(
         architecture=architecture,
@@ -165,10 +163,26 @@ def train(
         dataset_metadata=metadata,
         history=history,
         start_time=start_time,
+        end_time=end_time,
         activation=activation,
         early_stopping=early_stopping,
         dropout=dropout,
     )
+
+    # Write to log
+    with open(os.path.join(model_dir, model_id, "training.log"), "a+") as log_file:
+        header = ["start_time", "end_time", "activation", "model_dir_path", "learning_rate", "dropout", "epochs", "batch_size"]
+        writer = csv.DictWriter(log_file, fieldnames=header)
+        writer.writerow({
+            "start_time": start_time,
+            "end_time": end_time,
+            "activation": activation,
+            "model_dir_path": model_dir_path,
+            "learning_rate": learning_rate,
+            "dropout": dropout,
+            "epochs": epochs,
+            "batch_size": batch_size,
+        })
 
     return classifier, history, model_id
 
@@ -183,6 +197,7 @@ def write_metadata(
     dataset_metadata,
     history,
     start_time,
+    end_time,
     activation,
     early_stopping,
     dropout,
@@ -193,6 +208,7 @@ def write_metadata(
     metadata = {
         "id": model_id,
         "start_time": start_time,
+        "end_time": end_time,
         "arguments": {
             "batch_size": batch_size,
             "epochs": epochs,
