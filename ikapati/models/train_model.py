@@ -56,26 +56,38 @@ def model(num_classes, architecture="alexnet", learning_rate=0.001, activation="
     return model
 
 
-def _get_callbacks(start_time, logdir, monitor, model_dir, model_id):
-    return [
+def _get_callbacks(early_stopping, save_checkpoints, start_time, logdir, monitor, model_dir, model_id):
+    _callbacks = [
         tfdocs.modeling.EpochDots(),
-        keras.callbacks.EarlyStopping(
-            # Stop training when monitor (e.g. `val_loss`) is no longer improving
-            monitor=monitor,
-            # "no longer improving" being defined as "no better than 1e-2 less"
-            min_delta=1e-2,
-            # "no longer improving" being further defined as "for at least 3 epochs"
-            patience=5,
-            verbose=1,
-        ),
-        keras.callbacks.ModelCheckpoint(
-            filepath=os.path.join(model_dir, model_id, start_time, "{epoch}.h5"),
-            save_best_only=True,
-            monitor=monitor,
-            verbose=1,
-        ),
-        keras.callbacks.TensorBoard(logdir),
     ]
+
+    if early_stopping:
+        _callbacks.append(
+            keras.callbacks.EarlyStopping(
+                # Stop training when monitor (e.g. `val_loss`) is no longer improving
+                monitor=monitor,
+                # "no longer improving" being defined as "no better than 1e-2 less"
+                min_delta=1e-2,
+                # "no longer improving" being further defined as "for at least 3 epochs"
+                patience=5,
+                verbose=1,
+            ),
+        )
+
+    if save_checkpoints:
+        _callbacks.append(
+            keras.callbacks.ModelCheckpoint(
+                filepath=os.path.join(model_dir, model_id, start_time, "{epoch}.h5"),
+                save_best_only=True,
+                monitor=monitor,
+                verbose=1,
+            ),
+        )
+
+    
+    _callbacks.append(keras.callbacks.TensorBoard(logdir))
+
+    return _callbacks
 
 
 def load_dataset(data_dir, dataset_name, batch_size, num_classes):
@@ -110,6 +122,7 @@ def train(
     activation="linear",
     early_stopping=False,
     dropout=False,
+    save_checkpoints=False,
 ):
     # Set up logs
     logdir = pathlib.Path(tempfile.mkdtemp()) / "tensorboard_logs"
@@ -140,7 +153,7 @@ def train(
 
     callbacks = None
     if early_stopping:
-        callbacks = _get_callbacks(start_time, logdir, monitor, model_dir, model_id)
+        callbacks = _get_callbacks(early_stopping, save_checkpoints, start_time, logdir, monitor, model_dir, model_id)
 
     # Train
     history = classifier.fit(
@@ -241,6 +254,7 @@ def _parse_args():
 
     # Whether to stop when the monitor reaches a threshold
     parser.add_argument("--early_stopping", action="store_true", default=False)
+    parser.add_argument("--save_checkpoints", action="store_true", default=False)
 
     # Specify neural network architecture to use
     parser.add_argument("--architecture", type=str, default="alexnet")
@@ -287,6 +301,7 @@ if __name__ == "__main__":
         activation=args.activation,
         early_stopping=args.early_stopping,
         dropout=args.dropout,
+        save_checkpoints=args.save_checkpoints,
     )
 
     # save model
