@@ -102,12 +102,15 @@ def save_model(model, model_dir, model_id, start_time):
     model.save(model_filepath)
 
     # Save as tflite model as well
+    tflite_filepath = os.path.join(model_dir, model_id, start_time, "model.tflite")
+    save_model_as_tflite_model(model, tflite_filepath)
+
+
+def save_model_as_tflite_model(model, filepath):
     converter = tf.lite.TFLiteConverter.from_keras_model(model)
     tflite_model = converter.convert()
 
-    with open(
-        os.path.join(model_dir, model_id, start_time, "model.tflite"), "wb"
-    ) as converted_model_file:
+    with open(filepath, "wb") as converted_model_file:
         converted_model_file.write(tflite_model)
 
 
