@@ -26,18 +26,34 @@ def progress(count, total, status=""):
     sys.stdout.flush()
 
 
-def get_folder_paths(data_dir_path: str, species: str) -> List[pathlib.Path]:
+def get_folder_paths(data_dir_path: str, species: List[str]) -> List[pathlib.Path]:
     """ Get folder paths that match the species """
     data_dir = pathlib.Path(data_dir_path)
-    return list(data_dir.glob(f"{species}*/"))
+
+    if "all" in species:
+        return sorted(list(data_dir.glob(f"*/")))
+
+    folder_paths = []
+    for spec in species:
+        folder_paths.extend(list(data_dir.glob(f"{spec}*/")))
+
+    return sorted(folder_paths)
 
 
 def get_image_paths(
-    data_dir_path: str, species: str, file_ext: str = "JPG"
+    data_dir_path: str, species: List[str], file_ext: str = "JPG"
 ) -> List[str]:
     """ Get image file paths that match species and file extension """
     data_dir = pathlib.Path(data_dir_path)
-    return list(map(str, data_dir.glob(f"{species}*/*.{file_ext}")))
+
+    if "all" in species:
+        return sorted(list(map(str, data_dir.glob(f"*/*.{file_ext}"))))
+
+    image_paths = []
+    for spec in species:
+        paths = list(map(str, data_dir.glob(f"{spec}*/*.{file_ext}")))
+        image_paths.extend(paths)
+    return sorted(image_paths)
 
 
 def get_label(file_path: str, class_names: List[str]) -> Tuple[List[int], str]:
@@ -50,10 +66,17 @@ def get_label(file_path: str, class_names: List[str]) -> Tuple[List[int], str]:
     return label, label_text.numpy()
 
 
-def get_class_names(data_dir_path: str, species: str) -> List[str]:
+def get_class_names(data_dir_path: str, species: List[str]) -> List[str]:
     """ Get the class names from the data dir paths """
     data_dir = pathlib.Path(data_dir_path)
-    return np.array(sorted([item.name for item in data_dir.glob(f"{species}*")]))
+
+    if "all" in species:
+        return sorted([item.name for item in data_dir.glob(f"*")])
+
+    class_names = []
+    for spec in species:
+        class_names.extend([item.name for item in data_dir.glob(f"{spec}*")])
+    return np.array(sorted(class_names))
 
 
 def convert_to_one_hot_labels(labels, num_classes):
