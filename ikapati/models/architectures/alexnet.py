@@ -16,7 +16,7 @@ def model(num_classes, learning_rate=0.1, activation="linear", padding="same", c
     - https://engmrk.com/alexnet-implementation-using-keras/
     - https://github.com/tensorpack/benchmarks/blob/master/other-wrappers/keras.alexnet.py
     """
-    print(f"learning_rate: {learning_rate} - activation: {activation}")
+    print(f"learning_rate: {learning_rate} - activation: {activation} - dropout: {dropout}")
 
     convolution_layers = [
         # Layer 1
