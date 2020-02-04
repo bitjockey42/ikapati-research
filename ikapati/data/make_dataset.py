@@ -33,23 +33,26 @@ def prepare_dataset(
 
 
 @click.command()
-@click.argument("data_dir", type=click.Path())
-@click.argument("output_dir", type=click.Path())
-@click.option("--species", help="The name of the plant species, e.g. Corn")
+@click.argument("species", nargs=-1)
+@click.option("--data_dir", type=click.Path())
+@click.option("--output_dir", type=click.Path())
 @click.option(
     "--file-ext", default="JPG", help="The file extension of images, e.g. JPG"
 )
-def main(data_dir, output_dir, species, file_ext):
+def main(species, data_dir, output_dir, file_ext):
     """ Runs data processing scripts to turn raw data from (../raw) into
         cleaned data ready to be analyzed (saved in ../processed).
     """
     logger.info("making final data set from raw data")
+    print(species)
 
-    if species is not None:
-        output_dir = os.path.join(output_dir, species)
+    species_names = "_".join(sorted(species))
+    output_dir = os.path.join(output_dir, species_names)
 
     if not os.path.isdir(output_dir):
         os.makedirs(output_dir)
+
+    print(output_dir)
 
     prepare_dataset(data_dir, output_dir, species, file_ext)
 
