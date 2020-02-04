@@ -122,7 +122,7 @@ def train(
     learning_rate=0.001,
     activation="linear",
     early_stopping=False,
-    dropout=False,
+    dropout=None,
     save_checkpoints=False,
 ):
     # Set up logs
@@ -274,8 +274,8 @@ def _parse_args():
     # Specify neural network architecture to use
     parser.add_argument("--architecture", type=str, default="alexnet")
 
-    # Specify whether to use dropout
-    parser.add_argument("--dropout", action="store_true", default=False)
+    # Specify a dropout rate
+    parser.add_argument("--dropout", type=float, default=None)
 
     # Data, model, and output directories
     # model_dir is always passed in from SageMaker. By default this is a S3 path under the default bucket.

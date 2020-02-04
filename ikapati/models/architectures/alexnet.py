@@ -10,7 +10,7 @@ from tensorflow.keras import (
 )
 
 
-def model(num_classes, learning_rate=0.1, activation="linear", padding="same", channels=3, dropout=False):
+def model(num_classes, learning_rate=0.1, activation="linear", padding="same", channels=3, dropout=None):
     """
     This is a convolutional neural network based on the AlexNet implementations here:
     - https://engmrk.com/alexnet-implementation-using-keras/
@@ -82,11 +82,11 @@ def model(num_classes, learning_rate=0.1, activation="linear", padding="same", c
             layers.Flatten(),
             # FC 1
             layers.Dense(4096),
-            layers.Dropout(0.5),
+            layers.Dropout(dropout),
             layers.Activation(activation),
             # FC 2
             layers.Dense(4096),
-            layers.Dropout(0.5),
+            layers.Dropout(dropout),
             layers.Activation(activation),
             # Output Layer
             layers.Dense(num_classes),
