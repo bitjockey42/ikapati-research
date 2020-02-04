@@ -1,9 +1,12 @@
 import numpy as np
 import pandas as pd
 import seaborn as sns
+import pathlib
 
 from typing import List
 from matplotlib import pyplot as plt
+
+from ikapati.data.io import read_metadata
 
 
 def create_metrics_for_dataset_type(
@@ -44,3 +47,32 @@ def learning_curves(metric: str, metrics_df: pd.DataFrame):
 
 def save_plot(plot, filename: str):
     plot.get_figure().savefig(filename)
+
+
+def save_metrics_plots_for_training(training_csv_filename: str):
+    training_df = pd.read_csv(training_csv_filename)
+    training_df = training_df.fillna(0)
+    project_dir = pathlib.Path(__file__).resolve().parents[2]
+    figures_dir = project_dir.joinpath("reports", "figures")
+
+    for _, row in training_df.iterrows():
+        metadata_file_path = project_dir.joinpath(row.model_dir_path, "metadata.json")
+        metadata = read_metadata(str(metadata_file_path))
+        filename_template = f"{row.start_time}.{row.activation}.learning_rate_{row.learning_rate}.dropout_{row.dropout}.batch_size_{row.batch_size}.epochs_{row.epochs}"
+
+        model_figures_dir = figures_dir.joinpath(metadata["id"])
+        if not model_figures_dir.exists():
+            model_figures_dir.mkdir(parents=True)
+
+        history = metadata["history"]
+        metrics_df = create_metrics_dataframe(history)
+
+        loss_plot_file_path = model_figures_dir.joinpath(f"LOSS.{filename_template}.svg")
+        loss_plot = learning_curves("loss", metrics_df)
+        save_plot(loss_plot, str(loss_plot_file_path))
+        plt.clf()
+
+        acc_plot_file_path = model_figures_dir.joinpath(f"ACCURACY.{filename_template}.svg")
+        acc_plot = learning_curves("accuracy", metrics_df)
+        save_plot(acc_plot, str(figures_dir.joinpath(acc_plot_file_path)))
+        plt.clf()
