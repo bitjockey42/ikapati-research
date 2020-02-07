@@ -90,5 +90,4 @@ target/
 *.npy
 
 # This was taking up too much space
-models/
-
+/models/
