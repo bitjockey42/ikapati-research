@@ -42,6 +42,8 @@ def model(num_classes, architecture="alexnet", learning_rate=0.001, activation="
     """ Select an architecture and create a network from that """
     if architecture == "alexnet":
         model = architectures.alexnet.model(num_classes, learning_rate=learning_rate, activation=activation, padding=padding, dropout=dropout)
+    elif architecture == "inceptionv3":
+        model = architectures.inceptionv3.model(num_classes, learning_rate=learning_rate, activation=activation, padding=padding, dropout=dropout)
     else:
         raise NotImplementedError(f"{architecture} not implemented")
 
