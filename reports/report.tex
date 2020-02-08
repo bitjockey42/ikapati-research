@@ -113,6 +113,7 @@ These parameters can be tuned/specified at training time:
 	\item \textbf{batch size} - the number of training examples in each batch.
 	\item \textbf{activation} - the activation function to use, e.g. "relu".
 	\item \textbf{dropout} - the dropout rate, e.g. 0.2. This was only supported by AlexNet.
+	\item \textbf{architecture} - the architecture to use for the CNN, "alexnet" (for AlexNet) or "inceptionv3" (for InceptionV3).
 \end{itemize}
 
 \subsection{Benchmark}
@@ -161,12 +162,31 @@ The datasets were prepared using the \textbf{ikapati/data/make\_dataset.py} scri
 
 \subsubsection{Training Stage}
 
-The training models were created using TensorFlow 2.0 with the keras functional API. As described in the section \textbf{Algorithms and Techniques}, CNN was chosen as the classifier, with neural network architectures based on AlexNet and InceptionV3.
+The training models were created using TensorFlow 2.0 with the keras functional API. As described in the section \textbf{Algorithms and Techniques}, CNN was chosen as the classifier, with neural network architectures based on AlexNet and InceptionV3 as described in a previous study \cite{toda_how_2019} . TensorFlow was configured to use a physical GPU, a GeForce GTX 1080 Ti, to do the training. 
 
-For each of these 2 architectures, I followed these steps:
+The code used to build the AlexNet architecture was based on:
+
+\begin{itemize}
+    \item \url{https://engmrk.com/alexnet-implementation-using-keras/}
+	\item \url{https://github.com/tensorpack/benchmarks/blob/master/other-wrappers/keras.alexnet.py}
+\end{itemize}
+
+The code used to build the InceptionV3 architecture was based on:
+
+\begin{itemize}
+    \item \url{https://github.com/keras-team/keras-applications/blob/master/keras_applications/inception_v3.py}
+\end{itemize}
+
+The training steps for each training run were:
 
 \begin{enumerate}
-	\item 
+	\item Execute the ikapati/models/train\_model.py script with the architecture (alexnet or inceptionv3), learning rate, epochs, batch size, activation, and dropout rate (if architecture is set to alexnet) parameters specified and checkpoint saving enabled to kick off a training run. (See the \textbf{Hyperparameters} described in the section \textbf{Algorithms and Techniques}).
+	\item A folder is created under the model dir specified at runtime, with the UUID of dataset used as the name, and a subfolder within that with the start time string as the name. This will be where the models are saved during a training run.
+	\item The start time of the training is recorded.
+	\item After each epoch, if the validation loss has improved from the previous epoch, the model is saved to file in h5 format. Otherwise, we proceed with the next epoch.
+	\item When all epochs have concluded, a final model is saved to file and the end time is recorded.
+	\item Write the start and end time of the training run, the learning rate, and other parameters specified at runtime to a CSV file that acts as a log of training runs.
+	\item Repeat steps above, tweaking the hyperparameters.
 \end{enumerate}
 
 \subsubsection{Model Saving and Deployment}
