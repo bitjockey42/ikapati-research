@@ -33,7 +33,7 @@ def prepare_dataset(
 @click.option("--data_dir", type=click.Path())
 @click.option("--output_dir", type=click.Path())
 @click.option("--test-size", type=click.FLOAT, default=0.4)
-@click.option("--overwrite", type=click.BOOL, default=False)
+@click.option("--overwrite/--no-overwrite", default=False)
 @click.option(
     "--file-ext", default="JPG", help="The file extension of images, e.g. JPG"
 )
