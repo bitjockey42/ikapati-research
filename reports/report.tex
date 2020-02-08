@@ -61,23 +61,25 @@ Accuracy and loss were the main metrics used in this project.
 
 The main datasets used were obtained from the PlantVillage Dataset: \url{https://github.com/spMohanty/PlantVillage-Dataset}
 
-The dataset consists of 20,638 images each of which have the dimensions
-256 by 256 pixels and are all colored, non-greyscale JPEGs. The images
-are split up into several folders, labelled according to the plant
-species (e.g. Pepper Bell) and whether they are healthy or not (e.g.
-Pepper bell healthy, Pepper bell Bacterial spot).
-
-For this project, the colored photos were used for analysis and training. Due to time constraints, the scope of the project was narrowed down to one species - Tomato.
+The dataset consists of 52,803 colored images with dimensions 256x256. The images
+are split up into several folders, labelled according to the plant species (e.g. Peach) and disease class (e.g. Bacterial spot).
 
 \subsection{Exploratory Visualization}
 
-HERE PUT SOME IMAGES
+TODO: HERE PUT SOME IMAGES
 
 \subsection{Algorithms and Techniques}
 
 A \textbf{Convolutional Neural Network (CNN)} was selected as the classification algorithm due to its demonstrated efficacy in plant disease detection in previous studies \cite{toda_how_2019} \cite{fujita_basic_2016}.
 
-The CNN architecture is based on \textbf{AlexNet} \cite{krizhevsky_imagenet_2017} and is comprised of Conv2D (which does convolution), MaxPooling2D (max pooling), and FCD (which are a combination of Dense and Dropout layers).
+Two CNN architectures were used in this project:
+
+\begin{enumerate}
+	\item is based on \textbf{AlexNet} \cite{krizhevsky_imagenet_2017} and is comprised of Conv2D (which does convolution), MaxPooling2D (max pooling), and FCD (which are a combination of Dense and Dropout layers).
+	\item is based on the \textbf{InceptionV3} based network built in the study by Toda et al \cite{toda_how_2019} that demonstrated an accuracy of 99.99\% in predicting plant disease classification on the PlantVillage Dataset.
+\end{enumerate}
+
+\subsubsection{AlexNet}
 
 This describes the layer sequence (the number indicates how many of that same layer repeats until the next one):
 
@@ -86,26 +88,37 @@ This describes the layer sequence (the number indicates how many of that same la
 	\item MaxPooling2D (1) - Max Pooling Layer
 	\item Conv2D (2) - Convolution Layer
 	\item MaxPooling2D (1) - Max Pooling Layer
-	\item FCD (3) - Fully Connected Layer w/ Dropout 
+	\item FCD (3) - Fully Connected Layer w/ optional Dropout.
 \end{itemize}
 
+\subsubsection{InceptionV3}
+
+\begin{itemize}
+	\item Conv2D (3) - Convolution Layer with Batch Normalization
+	\item MaxPooling2D (1) - Max Pooling Layer
+	\item Conv2D (2) - Convolution Layer with Batch Normalization
+	\item MaxPooling2D (1) - Max Pooling Layer
+	\item Mixed (9) - Sets of Conv2D with batch normalization
+	\item GlobalAveragePooling2D (1) - Global Pooling Layer
+	\item Dense (1) - The Output Layer
+\end{itemize}
+
+\subsubsection{Hyperparameters}
 
 These parameters can be tuned/specified at training time:
-
 
 \begin{itemize}
 	\item \textbf{epochs} - the number of epochs to run.
 	\item \textbf{learning rate} - the learning rate (optional for dynamic tuning).
 	\item \textbf{batch size} - the number of training examples in each batch.
 	\item \textbf{activation} - the activation function to use, e.g. "relu".
+	\item \textbf{dropout} - the dropout rate, e.g. 0.2. This was only supported by AlexNet.
 \end{itemize}
 
 \subsection{Benchmark}
 
-The benchmark for the classifier were results obtained by previous studies by
+The benchmark for the plant disease classifier are results obtained by previous studies by
 Toda et al, Fuentes et al, on plant detection which all utilize a CNN as a classifier\cite{toda_how_2019} \cite{fuentes_robust_2017}.
-
-
 
 \section{Methodology}
 
@@ -114,51 +127,55 @@ Toda et al, Fuentes et al, on plant detection which all utilize a CNN as a class
 Preprocessing the data was completed using these steps:
 
 \begin{enumerate}
-	\item Shuffle list of image filenames.
-	\item Get labels from filenames.
-	\item Split list of image filenames into training files (80\%), validation (10\%), and testing files (10\%).
+	\item Get a list of all image filenames.
+	\item Shuffle list of image filenames. 
+	\item Get labels from the image folder names. For example: images that were in the Apple\_\_\_Apple\_scab were assigned the label Apple\_\_\_Apple\_scab.
+	\item Split list of image filenames into training files (60\%), validation (20\%), and testing files (20\%) to mirror the split in a previous study \cite{toda_how_2019} .
 	\item Create a training example for each image file so it can be added to a TFRecord (TensorFlow dataset).
-	\item Create parser function to read each TFRecord batch by batch during training due to hardware limitations (limited RAM, in this case).
-	\item Normalize image pixel values by dividing by 255 (representing the range of values for an RGB image).
+	\item Write metadata describing the file counts of training, validation, and test sets and list the class names.
+	\item Create parser function to read each TFRecord batch by batch during training due to hardware limitations (limited VRAM, in this case).
+	\item Normalize image pixel values by dividing by 255 (representing the range of values for an RGB image) and subtracting -0.5 to the values to make them fall in the -0.5 to 0.5 range.
 \end{enumerate}
 
 \subsection{Implementation}
 
-The library was primarily written in Python 3 and primarily utilizes TensorFlow 2.0 (tf) for training.
+The library was primarily written in Python 3 and utilizes TensorFlow 2.0 (tf) for model training.
 
-The modules for \textbf{ikapati} can be broken down as such:
+The modules for the \textbf{ikapati} library can be broken down as such:
 
 \begin{itemize}
-	\item \textbf{models} - these contain the training scripts and tools.
-	\item \textbf{data} - this has the utility functions used to preprocess the data.
-	\item \textbf{visualization} - this contains utility functions to help visualize and evaluate model performance.
+	\item \textbf{models} - these contain the training script and code to build the networks.
+	\item \textbf{data} - this has the utility functions used to preprocess the data, e.g. normalizing pixel values, reading datasets into memory.
+	\item \textbf{visualization} - this contains utility functions to help visualize and evaluate model performance. Figures included in this report were generated using that module.
 \end{itemize}
 
 \subsubsection{Data Preparation}
 
-The datasets were prepared using scikit-learn and TensorFlow 2.0, and then saved as TFRecords:
+The datasets were prepared using the \textbf{ikapati/data/make\_dataset.py} script (which utilizes datasets scikit-learn and TensorFlow 2.0) and then saved as TFRecords, a format used by TensorFlow.
 
 \begin{enumerate}
-	\item Get the filenames of all the images that match the specified plant species, in this case, "Tomato".
+	\item Get the filenames of all the images that match the specified plant species.
 	\item Follow the steps outlined in the \textbf{Data Preprocessing} section.
 	\item Put each subset of training examples (training, validation, and test) into separate TFRecords (train.tfrecord, eval.tfrecord, test.tfrecord).
 \end{enumerate}
 
 \subsubsection{Training Stage}
 
-The training models were created using TensorFlow 2.0 with the keras functional API. As described in the section \textbf{Algorithms and Techniques}, CNN was chosen as the classifier, with AlexNet being the basis for the neural network architecture.
+The training models were created using TensorFlow 2.0 with the keras functional API. As described in the section \textbf{Algorithms and Techniques}, CNN was chosen as the classifier, with neural network architectures based on AlexNet and InceptionV3.
+
+For each of these 2 architectures, I followed these steps:
 
 \begin{enumerate}
-	\item Create a keras Sequential model, with the layers in this order: 3 Conv2D, 1 MaxPooling2D, 2 Conv2D, 1 MaxPooling2D, 3 FCDs, 1 Output Layer.
+	\item 
 \end{enumerate}
+
+\subsubsection{Model Saving and Deployment}
+
+Upon training completion, trained models as saved in both h5 and tflite (TensorFlow Lite) formats.
 
 \subsubsection{Visualization and Metrics Tools}
 
 Utility functions to evaluate model performance were created using seaborn (a high-level API for matplotlib) and pandas.
-
-\subsubsection{Model Saving and Deployment}
-
-Upon training completion, 
 
 \subsection{Refinement}
 
