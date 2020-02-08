@@ -32,7 +32,7 @@ requirements: test_environment
 
 ## Make Dataset. Specify plant species e.g. Tomato
 data: requirements
-	$(PYTHON_INTERPRETER) $(SRC_DIR)/data/make_dataset.py data/raw data/processed --species $(SPECIES)
+	$(PYTHON_INTERPRETER) $(SRC_DIR)/data/make_dataset.py $(SPECIES) --data_dir data/raw --output_dir data/processed
 
 ## Delete all compiled Python files
 clean:

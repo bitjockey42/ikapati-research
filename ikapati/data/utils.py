@@ -84,11 +84,12 @@ def convert_to_one_hot_labels(labels, num_classes):
     return keras.utils.to_categorical(labels, num_classes=num_classes)
 
 
-def get_dataset_map(image_file_paths: List[str], class_names: List[str]) -> dict:
+def get_dataset_map(image_file_paths: List[str], class_names: List[str], test_size: float) -> dict:
     labels = [get_label(file_path, class_names)[0] for file_path in image_file_paths]
     train_files, test_files, train_labels, test_labels = train_test_split(
-        image_file_paths, labels, test_size=0.2, random_state=13
+        image_file_paths, labels, test_size=test_size, random_state=13
     )
+    # Split into validation and test sets
     test_files, eval_files, test_labels, eval_labels = train_test_split(
         test_files, test_labels, test_size=0.5, random_state=13
     )

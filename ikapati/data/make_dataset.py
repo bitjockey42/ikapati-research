@@ -14,14 +14,14 @@ logger = logging.getLogger(__name__)
 
 
 def prepare_dataset(
-    data_dir_path: str, output_dir_path: str, species: str, file_ext: str = "JPG"
+    data_dir_path: str, output_dir_path: str, species: str, test_size: float, file_ext: str = "JPG"
 ):
     logger.info("Preparing datasets")
     image_file_paths = utils.get_image_paths(data_dir_path, species)
     metadata_file_path = os.path.join(output_dir_path, "metadata.json")
 
     class_names = utils.get_class_names(data_dir_path, species)
-    dataset_map = utils.get_dataset_map(image_file_paths, class_names)
+    dataset_map = utils.get_dataset_map(image_file_paths, class_names, test_size)
 
     for key, file_paths in dataset_map.items():
         logger.info(f"Writing {key} record")
@@ -36,10 +36,11 @@ def prepare_dataset(
 @click.argument("species", nargs=-1)
 @click.option("--data_dir", type=click.Path())
 @click.option("--output_dir", type=click.Path())
+@click.option("--test-size", type=click.FLOAT, default=0.4)
 @click.option(
     "--file-ext", default="JPG", help="The file extension of images, e.g. JPG"
 )
-def main(species, data_dir, output_dir, file_ext):
+def main(species, data_dir, output_dir, test_size, file_ext):
     """ Runs data processing scripts to turn raw data from (../raw) into
         cleaned data ready to be analyzed (saved in ../processed).
     """
@@ -54,7 +55,7 @@ def main(species, data_dir, output_dir, file_ext):
 
     print(output_dir)
 
-    prepare_dataset(data_dir, output_dir, species, file_ext)
+    prepare_dataset(data_dir, output_dir, species, test_size, file_ext)
 
 
 if __name__ == "__main__":
