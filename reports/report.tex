@@ -180,7 +180,7 @@ The code used to build the InceptionV3 architecture was based on:
 The training steps for each training run were:
 
 \begin{enumerate}
-	\item Execute the ikapati/models/train\_model.py script with the architecture (alexnet or inceptionv3), learning rate, epochs, batch size, activation, and dropout rate (if architecture is set to alexnet) parameters specified and checkpoint saving enabled to kick off a training run. (See the \textbf{Hyperparameters} described in the section \textbf{Algorithms and Techniques}).
+	\item Execute the ikapati/models/train\_model.py script with the architecture (alexnet or inceptionv3), learning rate, epochs, batch size, activation, and dropout rate (if architecture is set to alexnet) hyperparameters specified, the model and data directories set, and checkpoint saving enabled to kick off a training run. (See the \textbf{Hyperparameters} described in the section \textbf{Algorithms and Techniques} for more details on the hyperparameters).
 	\item A folder is created under the model dir specified at runtime, with the UUID of dataset used as the name, and a subfolder within that with the start time string as the name. This will be where the models are saved during a training run.
 	\item The start time of the training is recorded.
 	\item After each epoch, if the validation loss has improved from the previous epoch, the model is saved to file in h5 format. Otherwise, we proceed with the next epoch.
