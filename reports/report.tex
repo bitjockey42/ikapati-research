@@ -3,7 +3,7 @@
 \documentclass[11pt]{article}
 \usepackage[latin9]{inputenc}
 \usepackage{url}
-\usepackage{amsmath}
+\usepackage{mathtools}
 \usepackage{graphicx}
 \usepackage{subcaption}
 \usepackage{listings}
@@ -58,8 +58,20 @@ To build this library, I needed to:
 
 Accuracy and loss were the main metrics used in this project to evaluate overall model performance. 
 
-Validation loss was used to determine whether the model was overfitting, underfitting, or fitting adequately.
+Accuracy is generally defined as such:
 
+\begin{equation}
+\frac{TP + TN}{TP + TN + FP + FN}
+\end{equation}
+
+Where $TP$ = true positives, $TN$ = true negatives, $FP$ = false positives, $FN$ = false negatives.
+
+Validation and training loss was used to determine whether the model was overfitting, underfitting, or fitting adequately. 
+
+If the curve of the validation loss decreases until a certain point, and then starts to increase again, it is indicative of overfitting.
+
+If the curve of the training loss remains flat then the model may be underfit.
+ 
 \clearpage
 \section{Analysis}
 
@@ -308,7 +320,7 @@ Models that showed overfitting, such as the AlexNet-based model, were discarded.
   \label{fig:alexnet}
 \end{figure}
 
-The 2 best performing models, based on these metrics, were both InceptionV3-based and outperformed the benchmark. In both of these runs, the learning rate was reduced to 0.001 from the benchmark 0.05. 
+The 2 best performing models, based on these metrics, were both InceptionV3-based and outperformed the benchmark. In both of these runs, the learning rate was reduced to 0.001 from the benchmark 0.05.
 
 \begin{figure}[h!]
   \centering
@@ -320,7 +332,7 @@ The 2 best performing models, based on these metrics, were both InceptionV3-base
     \includegraphics[width=\linewidth]{figures/best-model-accuracy-4632.png}
     \caption{Training vs Validation Accuracy}
   \end{subfigure}
-  \caption{Loss and accuracy plots for InceptionV3, with batch size of 64 and learning rate of 0.001.}
+  \caption{Model 1. Loss and accuracy plots for InceptionV3, with batch size of 64 and learning rate of 0.001.}
   \label{fig:best1}
 \end{figure}
 
@@ -334,20 +346,38 @@ The 2 best performing models, based on these metrics, were both InceptionV3-base
     \includegraphics[width=\linewidth]{figures/best-model-accuracy-5614.png}
     \caption{Training vs Validation Accuracy}
   \end{subfigure}
-  \caption{Loss and accuracy plots for InceptionV3, with batch size of 100 and learning rate of 0.001.}
+  \caption{Model 2. Loss and accuracy plots for InceptionV3, with batch size of 100 and learning rate of 0.001.}
   \label{fig:best2}
 \end{figure}
 
-In Figure ~\ref{fig:best1}, the plots show how that training run with the batch size reduced to 64 from 128 performed. On the test dataset, this model performed with an accuracy of 97\% and a loss score of 0.089.
+In Figure ~\ref{fig:best1}, the plots show how that training run Model 1, with the batch size reduced to 64 from 128 performed on the validation and training sets. On the test dataset, this model performed with an accuracy of 97\% and a loss score of 0.089.
 
 In Figure ~\ref{fig:best2}, the plots show how the training run with the same batch size as the benchmark but a learning rate reduced to 0.001 performed. On the test dataset, this this model performed with an accuracy of 96\% and a loss score of 0.126.
 
+While Model 1 and 2 performed similarly, Model 1 did better on the test dataset than Model 2, so it was selected as the Best Model.
+
 \subsection{Justification}
+
+The Best Model was converted to TensorFlow Lite format (tflite) and then transferred to the 
 
 \clearpage
 \section{Conclusion}
 
 \subsection{Free-Form Visualization}
+
+\begin{figure}[h!]
+  \centering
+  \begin{subfigure}[b]{0.5\linewidth}
+    \includegraphics[width=\linewidth]{figures/IMG_7846.jpg}
+    \caption{Jetson Nano Robot with Camera}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.5\linewidth}
+    \includegraphics[width=\linewidth]{figures/IMG_7845.jpg}
+    \caption{Side view of the Jetson Nano Robot}
+  \end{subfigure}
+  \caption{Jetson Nano Robot}
+  \label{fig:jetson}
+\end{figure}
 
 \subsection{Reflection}
 
@@ -367,6 +397,14 @@ I found 3-4, and 6 most challenging because I had never used TensorFlow at the l
 It was interesting to learn about how those neural networks work and how they can be improved upon.
 
 \subsection{Improvement}
+
+There is some opportunities for improvement from this project:
+
+\begin{itemize}
+	\item The dataset used here consisted of pictures with leaves that were set against a fairly uniform background. In a future iteration of this project, the dataset could be augmented by introducing random noise and transformations to a subset of images, and then use that to train.
+	\item The machine learning model could be converted to do online learning so that learning can be done as inference is attempted. This could be especially useful when trying to improve the accuracy of the model.
+	\item 
+\end{itemize}
 
 \clearpage
 \bibliographystyle{IEEEtran}
