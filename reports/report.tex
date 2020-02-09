@@ -71,9 +71,6 @@ The images are cropped in such a way that the leaves are centered in the picture
 
 The images are split up into several folders, labelled according to the plant species (e.g. Peach) and disease class (e.g. Bacterial spot).
 
-\subsection{Exploratory Visualization}
-
-TODO: HERE PUT SOME IMAGES
 
 \subsection{Algorithms and Techniques}
 
@@ -98,6 +95,15 @@ This describes the layer sequence (the number indicates how many of that same la
 	\item FCD (3) - Fully Connected Layer w/ optional Dropout.
 \end{itemize}
 
+
+\begin{figure}[h!]
+	\centering
+	\includegraphics[width=0.2\linewidth]{figures/alexnet.png}
+    \caption{AlexNet Architecture}
+  	\label{fig:alexnet}
+\end{figure}
+
+
 \subsubsection{InceptionV3}
 
 This InceptionV3-based network is based on what was done in a previous study \cite{toda_how_2019}, but as 9 Mixed modules instead of the 11 used in that study.
@@ -111,7 +117,7 @@ This InceptionV3-based network is based on what was done in a previous study \ci
 	\item GlobalAveragePooling2D (1) - Global Pooling Layer
 	\item Dense (1) - The Output Layer
 \end{itemize}
-
+ 
 \subsubsection{Hyperparameters}
 
 These parameters can be tuned/specified at training time:
@@ -257,8 +263,6 @@ For this project, I built a robot driven by a Jetson Nano, an embedded system bu
 
 \subsection{Model Evaluation and Visualization}
 
-TODO: insert figures here of the model performance.
-
 \subsection{Justification}
 
 \section{Conclusion}
@@ -271,6 +275,6 @@ TODO: insert figures here of the model performance.
 
 \bibliographystyle{IEEEtran}
 \bibliography{citations}
-
+	
 \end{document}
 
