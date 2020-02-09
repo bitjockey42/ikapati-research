@@ -360,7 +360,7 @@ While Model 1 and 2 performed similarly on the training and validation datasets,
 
 With an accuracy of 97\%,  and a loss score of 0.089, Model 1 also outperforms the benchmark model, which had 85.68\% accuracy and a loss score of 0.570 on the test data.
 
-Model 1 was converted to TensorFlow Lite format (tflite) and then transferred to the Jetson Nano Robot.
+Model 1 was converted to TensorFlow Lite format (tflite) and then transferred to the Jetson Nano Robot. The Flask app loaded the tflite model, and then listened for any requests to the \url{/predict} endpoint.
 
 \clearpage
 \section{Conclusion}
@@ -380,6 +380,26 @@ Model 1 was converted to TensorFlow Lite format (tflite) and then transferred to
   \caption{Jetson Nano Robot}
   \label{fig:jetson}
 \end{figure}
+
+
+\begin{figure}[h!]
+  \centering
+  \begin{subfigure}[b]{0.3\linewidth}
+    \includegraphics[width=\linewidth]{figures/examples/5365398.jpg}
+    \caption{Strawberry leaf spot }
+  \end{subfigure}
+   \begin{subfigure}[b]{0.3\linewidth}
+    \includegraphics[width=\linewidth]{figures/examples/5430722.jpg}
+    \caption{Septoria leaf spot }
+  \end{subfigure}
+   \begin{subfigure}[b]{0.3\linewidth}
+    \includegraphics[width=\linewidth]{figures/examples/5465560.jpg}
+    \caption{Common corn rust }
+  \end{subfigure}
+  \caption{Images the classifier failed on. \cite{noauthor_strawberry_2008} \cite{noauthor_septoria_2011}  \cite{noauthor_common_2012}  }
+  \label{fig:benchmark}
+\end{figure}
+
 
 \subsection{Reflection}
 
