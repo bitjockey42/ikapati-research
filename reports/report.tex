@@ -53,7 +53,7 @@ To build this library, I needed to:
 
 \subsection{Metrics}
 
-Accuracy and loss were the main metrics used in this project.
+Accuracy and loss were the main metrics used in this project to evaluate overall model performance.
 
 \section{Analysis}
 
@@ -61,8 +61,11 @@ Accuracy and loss were the main metrics used in this project.
 
 The main datasets used were obtained from the PlantVillage Dataset: \url{https://github.com/spMohanty/PlantVillage-Dataset}
 
-The dataset consists of 52,803 colored images with dimensions 256x256. The images
-are split up into several folders, labelled according to the plant species (e.g. Peach) and disease class (e.g. Bacterial spot).
+The dataset consists of 52,803 JPEG images with the dimensions 256x256. All of the images are colored, so there are 3 channels corresponding to the RGB mode.
+
+The images are cropped in such a way that the leaves are centered in the picture, and have a fairly uniform-looking, solid background.
+
+The images are split up into several folders, labelled according to the plant species (e.g. Peach) and disease class (e.g. Bacterial spot).
 
 \subsection{Exploratory Visualization}
 
@@ -92,6 +95,8 @@ This describes the layer sequence (the number indicates how many of that same la
 \end{itemize}
 
 \subsubsection{InceptionV3}
+
+This InceptionV3-based network is based on what was done in a previous study \cite{toda_how_2019}, but as 9 Mixed modules instead of the 11 used in that study.
 
 \begin{itemize}
 	\item Conv2D (3) - Convolution Layer with Batch Normalization
@@ -135,7 +140,7 @@ Preprocessing the data was completed using these steps:
 	\item Create a training example for each image file so it can be added to a TFRecord (TensorFlow dataset).
 	\item Write metadata describing the file counts of training, validation, and test sets and list the class names.
 	\item Create parser function to read each TFRecord batch by batch during training due to hardware limitations (limited VRAM, in this case).
-	\item Normalize image pixel values by dividing by 255 (representing the range of values for an RGB image) and subtracting -0.5 to the values to make them fall in the -0.5 to 0.5 range.
+	\item Normalize image pixel values by dividing by 255 (representing the range of values for an RGB image) and subtract -0.5 to the values to make them fall in the -0.5 to 0.5 range.
 \end{enumerate}
 
 \subsection{Implementation}
@@ -162,7 +167,7 @@ The datasets were prepared using the \textbf{ikapati/data/make\_dataset.py} scri
 
 \subsubsection{Training Stage}
 
-The training models were created using TensorFlow 2.0 with the keras functional API. As described in the section \textbf{Algorithms and Techniques}, CNN was chosen as the classifier, with neural network architectures based on AlexNet and InceptionV3 as described in a previous study \cite{toda_how_2019} . TensorFlow was configured to use a physical GPU, a GeForce GTX 1080 Ti, to do the training.
+The training models were created using TensorFlow 2.0 with the keras functional API. As described in the section \textbf{Algorithms and Techniques}, CNN was chosen as the classifier, with neural network architectures based on AlexNet and InceptionV3 as described in a previous study \cite{toda_how_2019} . TensorFlow was configured to use a physical GPU similar to what was used in the Toda study, a GeForce GTX 1080 Ti with 11GB of VRAM, to do the training.
 
 The code used to build the AlexNet architecture was based on:
 
@@ -181,13 +186,25 @@ The training steps for each training run were:
 
 \begin{enumerate}
 	\item Execute the ikapati/models/train\_model.py script with the architecture (alexnet or inceptionv3), learning rate, epochs, batch size, activation, and dropout rate (if architecture is set to alexnet) hyperparameters specified, the model and data directories set, and checkpoint saving enabled to kick off a training run. (See the \textbf{Hyperparameters} described in the section \textbf{Algorithms and Techniques}d for more details on the hyperparameters).
-	\item A folder is created under the model dir specified at runtime, with the UUID of dataset used as the name, and a subfolder within that with the start time string as the name. This will be where the models are saved during this training run.
-	\item The start time of the training is recorded.
-	\item After each epoch, if the validation loss has improved from the previous epoch, the model is saved to file in h5 format. Otherwise, we don't save anything and proceed with the next epoch.
-	\item When all epochs have concluded, a final model is saved to file and the end time is recorded.
+	\item Create a folder under the model dir specified at runtime, with the UUID of dataset used as the name, and a subfolder within that with the start time string as the name. This will be where the models are saved during this training run.
+	\item Record the start time.
+	\item After each epoch, if the validation loss has improved from the previous epoch, save the model to file in h5 format. Otherwise, we don't save anything and proceed with the next epoch.
+	\item When all epochs have concluded, save the final model to file and record the end time.
 	\item Write the start and end time of the training run, the learning rate, and other parameters specified at runtime to a CSV file that acts as a log of training runs.
 	\item Repeat steps above, tweaking the hyperparameters as needed.
 \end{enumerate}
+
+\subsection{Refinement}
+
+Training was done iteratively, with modifications to the hyperparameters made after each iteration, and models were saved at every checkpoint (in this case, the epoch) for which the validation loss improved.
+
+In a benchmark run, the learning rate was set to 0.001, the batch size to 128, and the activation function to "linear".
+
+In another benchmark run, the hyperparameters were set to match that of the benchmark model from Toda et al, with the learning rate set to 0.05, the batch size to 128, and the epochs to 20. The architecture was inceptionv3 and the activation function was "relu" (rectified linear units).
+
+In subsequent iterations, the learning rate was changed to 0.001, the batch size set to 100.
+
+TODO: insert figures here of the model performance
 
 \subsubsection{Visualization and Metrics Tools}
 
@@ -199,9 +216,11 @@ Upon training completion, trained models as saved in both h5 and tflite (TensorF
 
 For this project, I built a robot driven by a Jetson Nano, an embedded system built specifically for use in Artificial Intelligence by NVIDIA.
 
-\subsection{Refinement}
-
 \section{Results}
+
+\subsection{Model Evaluation and Visualization}
+
+TODO: insert figures here of the model performance.
 
 \subsection{Justification}
 
