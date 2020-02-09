@@ -354,11 +354,13 @@ In Figure ~\ref{fig:best1}, the plots show how that training run Model 1, with t
 
 In Figure ~\ref{fig:best2}, the plots show how the training run with the same batch size as the benchmark but a learning rate reduced to 0.001 performed. On the test dataset, this this model performed with an accuracy of 96\% and a loss score of 0.126.
 
-While Model 1 and 2 performed similarly, Model 1 did better on the test dataset than Model 2, so it was selected as the Best Model.
-
 \subsection{Justification}
 
-The Best Model was converted to TensorFlow Lite format (tflite) and then transferred to the 
+While Model 1 and 2 performed similarly on the training and validation datasets, Model 1 did better on the test dataset than Model 2, so it was selected as the best model. 
+
+With an accuracy of 97\%,  and a loss score of 0.089, Model 1 also outperforms the benchmark model, which had 85.68\% accuracy and a loss score of 0.570 on the test data.
+
+Model 1 was converted to TensorFlow Lite format (tflite) and then transferred to the Jetson Nano Robot.
 
 \clearpage
 \section{Conclusion}
@@ -403,7 +405,6 @@ There is some opportunities for improvement from this project:
 \begin{itemize}
 	\item The dataset used here consisted of pictures with leaves that were set against a fairly uniform background. In a future iteration of this project, the dataset could be augmented by introducing random noise and transformations to a subset of images, and then use that to train.
 	\item The machine learning model could be converted to do online learning so that learning can be done as inference is attempted. This could be especially useful when trying to improve the accuracy of the model.
-	\item 
 \end{itemize}
 
 \clearpage
