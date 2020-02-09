@@ -5,6 +5,7 @@
 \usepackage{url}
 \usepackage{amsmath}
 \usepackage{graphicx}
+\usepackage{subcaption}
 
 \makeatletter
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% User specified LaTeX commands.
@@ -203,6 +204,19 @@ In the initial benchmark run, the hyperparameters were set to match that of the 
 
 The benchmark model achieved an accuracy of 85.68\% on the test dataset, and a loss score of 0.570. 
 
+\begin{figure}[h!]
+  \centering
+  \begin{subfigure}[b]{0.5\linewidth}
+    \includegraphics[width=\linewidth]{figures/benchmark-loss.png}
+    \caption{Training vs Validation Loss}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.5\linewidth}
+    \includegraphics[width=\linewidth]{figures/benchmark-accuracy.png}
+    \caption{Training vs Validation Accuracy}
+  \end{subfigure}
+  \caption{Loss and accuracy plots for the benchmark model.}
+  \label{fig:benchmark}
+\end{figure}
 
 In subsequent training runs, certain modifications were made to the hyperparameters to see if it would improve the model validation loss and accuracy:
 
@@ -215,7 +229,19 @@ In subsequent training runs, certain modifications were made to the hyperparamet
 	\item When selected as the architecture, AlexNet demonstrated a tendency to overfit on this dataset even with dropout layers, so InceptionV3 became the defacto architecture. 
 \end{itemize}
 
-TODO: insert figures here of the model performance
+\begin{figure}[h!]
+  \centering
+  \begin{subfigure}[b]{0.5\linewidth}
+    \includegraphics[width=\linewidth]{figures/alexnet-loss.png}
+    \caption{Training vs Validation Loss}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.5\linewidth}
+    \includegraphics[width=\linewidth]{figures/alexnet-accuracy.png}
+    \caption{Training vs Validation Accuracy}
+  \end{subfigure}
+  \caption{Loss and accuracy plots for AlexNet. Validation shows overfitting.}
+  \label{fig:benchmark}
+\end{figure}
 
 \subsubsection{Visualization and Metrics Tools}
 
