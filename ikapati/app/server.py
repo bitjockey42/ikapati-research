@@ -20,7 +20,6 @@ from ikapati.data.io import read_metadata, NumpyEncoder
 from ikapati.data.image_processing import preprocess_image, preprocess_raw_image
 
 app = flask.Flask(__name__)
-app.json_encoder = NumpyEncoder
 
 
 @app.route("/predict", methods=["POST"])
@@ -38,7 +37,6 @@ def predict_disease():
 
     data = {
         "class_name": class_names[label_id],
-        "probability": probability
     }
 
     return flask.jsonify(data)
