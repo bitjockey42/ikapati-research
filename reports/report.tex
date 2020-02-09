@@ -176,7 +176,7 @@ Preprocessing the data was completed using these steps:
 
 \subsection{Implementation}
 
-The library was primarily written in Python 3 and utilizes TensorFlow 2.0 (tf) for model training.
+The library was primarily written in Python 3. TensorFlow 2.0 with the keras API was used in the training stage.
 
 The modules for the \textbf{ikapati} library can be broken down as such:
 
@@ -229,7 +229,7 @@ The training steps for each training run were:
 
 In the initial benchmark run, the hyperparameters were set to match that of the benchmark model from Toda et al, with the learning rate set to 0.05, the batch size to 128, and the epochs to 20. The architecture was inceptionv3 and the activation function was "relu" (rectified linear units). \textbf{NOTE} The benchmark model input shape was 224x224, where as in this project the input shape was 256x256.
 
-The benchmark model achieved an accuracy of 85.68\% on the test dataset, and a loss score of 0.570. 
+The benchmark model achieved an accuracy of 85.68\% on the test dataset, and a loss score of 0.570 (Figure ~\ref{fig:benchmark}). 
 
 In subsequent training runs, certain modifications were made to the hyperparameters to see if it would improve the model validation loss and accuracy:
 
@@ -262,15 +262,13 @@ Utility functions to evaluate model performance were created using seaborn (a hi
 
 \subsubsection{Deployment to an Embedded System}
 
-Upon training completion, trained models as saved in both h5 and tflite (TensorFlow Lite) formats. Both formats can be loaded for later use with the TensorFlow library, but the tflite format is specifically used to run model inference on embedded devices such as the Jetson Nano.
-
-For this project, I built a robot driven by a Jetson Nano, an embedded system built specifically for use in Artificial Intelligence by NVIDIA.
+Upon training completion, trained models as saved in both h5 and tflite (TensorFlow Lite) formats. Both formats can be loaded for later use with the TensorFlow library, but the tflite format is specifically used to run model inference on embedded devices such as the Jetson Nano mentioned previously.
 
 \section{Results}
 
 \subsection{Model Evaluation and Visualization}
 
-Model performance was evaluated with accuracy and loss scores for both cross-validation during training and for evaluating performance on the test set.
+Model performance was evaluated with accuracy and loss plots (Figure ~\ref{fig:best1}) for both cross-validation during training and for evaluating performance on the test set.
 
 The 2 best performing models, based on those metrics, were both InceptionV3 networks.
 
@@ -285,7 +283,7 @@ The 2 best performing models, based on those metrics, were both InceptionV3 netw
     \caption{Training vs Validation Accuracy}
   \end{subfigure}
   \caption{Loss and accuracy plots for InceptionV3, with batch size of 64 and learning rate of 0.001.}
-  \label{fig:benchmark}
+  \label{fig:best1}
 \end{figure}
 
 \begin{figure}[h!]
@@ -299,7 +297,7 @@ The 2 best performing models, based on those metrics, were both InceptionV3 netw
     \caption{Training vs Validation Accuracy}
   \end{subfigure}
   \caption{Loss and accuracy plots for InceptionV3, with batch size of 100 and learning rate of 0.001.}
-  \label{fig:benchmark}
+  \label{fig:best2}
 \end{figure}
 
 \subsection{Justification}
