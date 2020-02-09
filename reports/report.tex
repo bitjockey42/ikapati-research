@@ -53,7 +53,7 @@ To build this library, I needed to:
 
 \subsection{Metrics}
 
-Accuracy and loss were the main metrics used in this project.
+Accuracy and loss were the main metrics used in this project to evaluate overall model performance.
 
 \section{Analysis}
 
@@ -95,6 +95,8 @@ This describes the layer sequence (the number indicates how many of that same la
 \end{itemize}
 
 \subsubsection{InceptionV3}
+
+This InceptionV3-based network is based on what was done in a previous study \cite{toda_how_2019}, but as 9 Mixed modules instead of the 11 used in that study.
 
 \begin{itemize}
 	\item Conv2D (3) - Convolution Layer with Batch Normalization
@@ -194,7 +196,13 @@ The training steps for each training run were:
 
 \subsection{Refinement}
 
+Training was done iteratively, with modifications to the hyperparameters made after each iteration, and models were saved at every checkpoint (in this case, the epoch) for which the validation loss improved.
 
+In a benchmark run, the learning rate was set to 0.001, the batch size to 128, and the activation function to "linear".
+
+In another benchmark run, the hyperparameters were set to match that of the benchmark model from Toda et al, with the learning rate set to 0.05, the batch size to 128, and the epochs to 20. The architecture was inceptionv3 and the activation function was "relu" (rectified linear units).
+
+In subsequent iterations, the learning rate was changed to 0.001, the batch size set to 100.
 
 TODO: insert figures here of the model performance
 
@@ -210,7 +218,9 @@ For this project, I built a robot driven by a Jetson Nano, an embedded system bu
 
 \section{Results}
 
-TODO: insert figures here of the model performance
+\subsection{Model Evaluation and Visualization}
+
+TODO: insert figures here of the model performance.
 
 \subsection{Justification}
 
