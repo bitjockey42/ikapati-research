@@ -196,13 +196,11 @@ The training steps for each training run were:
 
 \subsection{Refinement}
 
-Training was done iteratively, with modifications to the hyperparameters made after each iteration, and models were saved at every checkpoint (in this case, the epoch) for which the validation loss improved.
+Training was done iteratively, with modifications to the hyperparameters made after each iteration, and models were saved at every checkpoint (in this case, the epoch) for which the validation loss improved. For each of these, epochs was set to 20.
 
-In a benchmark run, the learning rate was set to 0.001, the batch size to 128, and the activation function to "linear".
+In the benchmark run, the hyperparameters were set to match that of the benchmark model from Toda et al, with the learning rate set to 0.05, the batch size to 128. The architecture was inceptionv3 and the activation function was "relu" (rectified linear units).
 
-In another benchmark run, the hyperparameters were set to match that of the benchmark model from Toda et al, with the learning rate set to 0.05, the batch size to 128, and the epochs to 20. The architecture was inceptionv3 and the activation function was "relu" (rectified linear units).
-
-In subsequent iterations, the learning rate was changed to 0.001, the batch size set to 100.
+In a subsequent iteration, the learning rate was changed to 0.001, the batch size set to 100.
 
 TODO: insert figures here of the model performance
 
