@@ -146,7 +146,7 @@ These parameters can be tuned/specified at training time:
 
 \begin{itemize}
 	\item \textbf{epochs} - the number of times to run through the training set.
-	\item \textbf{learning rate} - the learning rate (optional for dynamic tuning).
+	\item \textbf{learning rate} - the learning rate for the Adam optimizer.
 	\item \textbf{batch size} - the number of training examples in each batch.
 	\item \textbf{activation} - the activation function to use, e.g. "relu".
 	\item \textbf{dropout} - the dropout rate, e.g. 0.2. This was only supported by AlexNet.
@@ -268,9 +268,9 @@ Upon training completion, trained models as saved in both h5 and tflite (TensorF
 
 A simple web app was created using the Flask framework. 
 
-This web app has a POST endpoint located at \url{http://jetbot:5000/predict}, which loads the tensorflow lite model and then attempts to predict the class name for an input image.
+This web app has a POST endpoint located at \url{http://jetbot:5000/predict}, which loads the tensorflow lite model and then attempts to predict the class name for an input image uploaded using that endpoint.
 
-To simulate a POST request to the Flask endpoint, the curl commandline tool was used with the image file passed in:
+To simulate a POST request to that endpoint, the curl commandline tool was used with the image file passed in:
 
 \begin{lstlisting}
 curl -F "image=@blight.jpg" http://jetbot:5000/predict
@@ -316,7 +316,7 @@ The 2 best performing models, based on these metrics, were both InceptionV3-base
   \label{fig:best1}
 \end{figure}
 
-Figure ~\ref{fig:best1} shows how that training run with the batch size reduced to 64 from 128 performed. On the test dataset, this model performed with an accuracy of 97\% and a loss score of 0.089.
+In Figure ~\ref{fig:best1}, the plots show how that training run with the batch size reduced to 64 from 128 performed. On the test dataset, this model performed with an accuracy of 97\% and a loss score of 0.089.
 
 \begin{figure}[h!]
   \centering
@@ -332,15 +332,23 @@ Figure ~\ref{fig:best1} shows how that training run with the batch size reduced 
   \label{fig:best2}
 \end{figure}
 
-Figure ~\ref{fig:best2} shows how the training run with the same batch size as the benchmark but a learning rate reduced to 0.001 performed. On the test dataset, this this model performed with an accuracy of 96\% and a loss score of 0.126.
+In Figure ~\ref{fig:best2}, the plots show how the training run with the same batch size as the benchmark but a learning rate reduced to 0.001 performed. On the test dataset, this this model performed with an accuracy of 96\% and a loss score of 0.126.
 
 \subsection{Justification}
 
 \section{Conclusion}
 
-\subsection{Visualization}
+\subsection{Free-Form Visualization}
 
 \subsection{Reflection}
+
+These steps summarize what was done to complete this project:
+
+\begin{enumerate}
+	\item Initial exploration of the agricultural domain was done to see what problems need more investigation.
+	\item A large dataset with multiple classes of plants was downloaded and then preprocessed.
+	\item 
+\end{enumerate}
 
 \subsection{Improvement}
 
