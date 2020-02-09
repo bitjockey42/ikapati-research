@@ -6,6 +6,7 @@
 \usepackage{amsmath}
 \usepackage{graphicx}
 \usepackage{subcaption}
+\usepackage{listings}
 
 \makeatletter
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% User specified LaTeX commands.
@@ -157,6 +158,7 @@ These parameters can be tuned/specified at training time:
 The benchmark for the plant disease classifier are results obtained by previous studies by
 Toda et al, Fuentes et al, on plant detection which all utilize a CNN as a classifier\cite{toda_how_2019} \cite{fuentes_robust_2017}.
 
+\newpage
 \section{Methodology}
 
 \subsection{Data Preprocessing}
@@ -231,6 +233,20 @@ In the initial benchmark run, the hyperparameters were set to match that of the 
 
 The benchmark model achieved an accuracy of 85.68\% on the test dataset, and a loss score of 0.570 (Figure ~\ref{fig:benchmark}). 
 
+\begin{figure}[h!]
+  \centering
+  \begin{subfigure}[b]{0.6\linewidth}
+    \includegraphics[width=\linewidth]{figures/benchmark-loss.png}
+    \caption{Training vs Validation Loss}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.6\linewidth}
+    \includegraphics[width=\linewidth]{figures/benchmark-accuracy.png}
+    \caption{Training vs Validation Accuracy}
+  \end{subfigure}
+  \caption{Loss and accuracy plots for the benchmark model.}
+  \label{fig:benchmark}
+\end{figure}
+
 In subsequent training runs, certain modifications were made to the hyperparameters to see if it would improve the model validation loss and accuracy:
 
 \begin{itemize}
@@ -241,6 +257,34 @@ In subsequent training runs, certain modifications were made to the hyperparamet
 	\item After each iteration, the validation vs training loss was plotted to determine whether a model is underfitting or overfitting, or reaching a good fit.
 	\item When selected as the architecture, AlexNet demonstrated a tendency to overfit on this dataset even with dropout layers, so InceptionV3 became the defacto architecture. 
 \end{itemize}
+
+\subsubsection{Visualization and Metrics Tools}
+
+Utility functions to evaluate model performance were created using seaborn (a high-level API for matplotlib) and pandas.
+
+\subsubsection{Deployment to an Embedded System}
+
+Upon training completion, trained models as saved in both h5 and tflite (TensorFlow Lite) formats. Both formats can be loaded for later use with the TensorFlow library, but the tflite format is specifically used to run inference on embedded devices such as the Jetson Nano mentioned previously.
+
+A simple web app was created using the Flask framework. 
+
+This web app has a POST endpoint located at \url{http://jetbot:5000/predict}, which loads the tensorflow lite model and then attempts to predict the class name for an input image.
+
+To simulate a POST request to the Flask endpoint, the curl commandline tool was used with the image file passed in:
+
+\begin{lstlisting}
+curl -F "image=@blight.jpg" http://jetbot:5000/predict
+\end{lstlisting}
+
+This endpoint expects a 256x256 image. If the request is successful, the result will be a JSON body containing the predicted class for the input image.
+
+\section{Results}
+
+\subsection{Model Evaluation and Visualization}
+
+Model performance was evaluated with accuracy and loss plots (Figure ~\ref{fig:best1}). 
+
+Models that showed overfitting, such as the AlexNet-based model, were discarded.
 
 \begin{figure}[h!]
   \centering
@@ -253,26 +297,12 @@ In subsequent training runs, certain modifications were made to the hyperparamet
     \caption{Training vs Validation Accuracy}
   \end{subfigure}
   \caption{Loss and accuracy plots for AlexNet. Validation shows overfitting.}
-  \label{fig:benchmark}
+  \label{fig:alexnet}
 \end{figure}
 
-\subsubsection{Visualization and Metrics Tools}
+The 2 best performing models, based on these metrics, were both InceptionV3 networks. In both of these runs, the learning rate was reduced to 0.001 from the benchmark 0.05. 
 
-Utility functions to evaluate model performance were created using seaborn (a high-level API for matplotlib) and pandas.
-
-\subsubsection{Deployment to an Embedded System}
-
-Upon training completion, trained models as saved in both h5 and tflite (TensorFlow Lite) formats. Both formats can be loaded for later use with the TensorFlow library, but the tflite format is specifically used to run model inference on embedded devices such as the Jetson Nano mentioned previously.
-
-\section{Results}
-
-\subsection{Model Evaluation and Visualization}
-
-Model performance was evaluated with accuracy and loss plots (Figure ~\ref{fig:best1}) for both cross-validation during training and for evaluating performance on the test set.
-
-The 2 best performing models, based on those metrics, were both InceptionV3 networks.
-
-\begin{figure}[h]
+\begin{figure}[h!]
   \centering
   \begin{subfigure}[b]{0.6\linewidth}
     \includegraphics[width=\linewidth]{figures/best-model-loss-4632.png}
@@ -285,6 +315,8 @@ The 2 best performing models, based on those metrics, were both InceptionV3 netw
   \caption{Loss and accuracy plots for InceptionV3, with batch size of 64 and learning rate of 0.001.}
   \label{fig:best1}
 \end{figure}
+
+Figure ~\ref{fig:best1} shows how that training run with the batch size reduced to 64 from 128 performed. On the test dataset, this model performed with an accuracy of 97\% and a loss score of 0.089.
 
 \begin{figure}[h!]
   \centering
@@ -300,6 +332,8 @@ The 2 best performing models, based on those metrics, were both InceptionV3 netw
   \label{fig:best2}
 \end{figure}
 
+Figure ~\ref{fig:best2} shows how the training run with the same batch size as the benchmark but a learning rate reduced to 0.001 performed. On the test dataset, this this model performed with an accuracy of 96\% and a loss score of 0.126.
+
 \subsection{Justification}
 
 \section{Conclusion}
@@ -310,18 +344,7 @@ The 2 best performing models, based on those metrics, were both InceptionV3 netw
 
 \subsection{Improvement}
 
-\section{Additional Figures}
-
-\begin{figure}[h!]
-\includegraphics[width=\linewidth]{figures/inception_condensed.png}
-\caption{InceptionV3 Network}
-\end{figure}
-
-\begin{figure}[h!]
-\includegraphics[width=\linewidth]{figures/mixed.png}
-\caption{Mixed module}
-\end{figure}
-
+\clearpage
 \bibliographystyle{IEEEtran}
 \bibliography{citations}
 	
