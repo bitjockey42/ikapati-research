@@ -37,7 +37,7 @@ a farmer to manually check each growing plant for disease. It can
 potentially be more cost-effective to diagnose plant diseases with
 automated tools \cite{fujita_basic_2016}.
 
-For this project, I built the Python library \textbf{ikapati} (named after the Filipino goddess of agriculture), which implements a plant disease detector and then deployed the best-performing model to an embedded system built specifically for use in Artificial Intelligence applications, a Jetson Nano robot.
+For this project, I built the Python library \textbf{ikapati} (named after the Filipino goddess of agriculture), which implements a plant disease detector and then deployed the best-performing model to an embedded system built specifically for use in Artificial Intelligence applications, a Jetson Nano robot.	
 
 The library also provides utility tools to do many of the tasks required in machine learning research, including the image preprocessing necessary to prepare the data for classification, scripts to train classifier itself, and utility functions to help evaluate performance.
 
@@ -351,7 +351,7 @@ These steps summarize what was done to complete this project:
 	\item Initial exploration of the agricultural domain was done to see what problems need more investigation.
 	\item A large dataset with multiple classes of plants was downloaded and then preprocessed.
 	\item A benchmark model was created based on a previous study \cite{toda_how_2019} .
-	\item Training using different hyperparameters was done.
+	\item Models built in TensorFlow were trained using different hyperparameters.
 	\item The best model was chosen using validation loss and accuracy scores and then converted to TensorFlow Lite format.
 	\item A simple Flask API that loads the TensorFlow Lite model and does inference, was deployed to a Jetson Nano.
 \end{enumerate}
