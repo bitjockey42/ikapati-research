@@ -8,6 +8,7 @@ This should output the disease (or "healthy")
 """
 
 import os
+import io
 import json
 import click
 
@@ -16,7 +17,7 @@ import tensorflow as tf
 from tensorflow import keras
 
 from ikapati.data.io import read_metadata
-from ikapati.data.image_processing import preprocess_image
+from ikapati.data.image_processing import preprocess_image, preprocess_raw_image
 
 
 def prepare_input_data(input_filename):
@@ -50,6 +51,21 @@ def load_tflite_model(model_dir):
     return interpreter
 
 
+def predict_disease(interpreter, input_data, class_names):
+    # Get input and output tensors.
+    input_details = interpreter.get_input_details()
+    output_details = interpreter.get_output_details()
+    
+    # Make a prediction
+    interpreter.set_tensor(input_details[0]["index"], input_data)
+    interpreter.invoke()
+    predictions = interpreter.get_tensor(output_details[0]["index"])
+    label_id = get_label_id(predictions[0])
+    probability = get_probability(predictions[0])
+
+    return class_names[label_id], probability
+
+
 @click.command()
 @click.argument("model_dir", type=click.Path())
 @click.option("--input_filename", type=click.Path())
@@ -59,23 +75,13 @@ def main(model_dir, input_filename):
 
     # Load saved tflite model
     interpreter = load_tflite_model(model_dir)
-
+   
     # Preprocess image
     input_data = prepare_input_data(input_filename)
-
-    # Get input and output tensors.
-    input_details = interpreter.get_input_details()
-    output_details = interpreter.get_output_details()
-
-    # Make a prediction
-    interpreter.set_tensor(input_details[0]["index"], input_data)
-    interpreter.invoke()
-    predictions = interpreter.get_tensor(output_details[0]["index"])
-    label_id = get_label_id(predictions[0])
-    probability = get_probability(predictions[0])
-
-    # Show result
-    print(f"I detected {class_names[label_id]} for this input file, with a probability of {probability}")
+    
+    # Predict
+    prediction, probability = predict_disease(interpreter, input_data, class_names)
+    print(f"I detected {prediction} for this input file, with a probability of {probability}")
 
 
 if __name__ == "__main__":
