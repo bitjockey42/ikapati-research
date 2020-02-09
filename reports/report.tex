@@ -36,13 +36,13 @@ a farmer to manually check each growing plant for disease. It can
 potentially be more cost-effective to diagnose plant diseases with
 automated tools \cite{fujita_basic_2016}.
 
-For this project, I built the Python library \textbf{ikapati}, which implements a multi-class classifier that functions as a plant disease detector and then deployed the best-performing model to an embedded system built specifically for use in Artificial Intelligence applications, a Jetson Nano robot.
+For this project, I built the Python library \textbf{ikapati} (named after the Filipino goddess of agriculture), which implements a plant disease detector and then deployed the best-performing model to an embedded system built specifically for use in Artificial Intelligence applications, a Jetson Nano robot.
 
 The library also provides utility tools to do many of the tasks required in machine learning research, including the image preprocessing necessary to prepare the data for classification, scripts to train classifier itself, and utility functions to help evaluate performance.
 
 \subsection{Problem Statement}
 
-My main objective for this project was to build a library that can be used for both plant disease classification and can act as a framework with which to do further research in this subject area. It can be used to complete an entire machine learning pipeline from training to deployment to an embedded system.
+The main objective for this project was to build a library that can be used for training a plant disease classifier and in doing so act as a framework with which to do further research in this subject area. It can be used to complete an entire machine learning pipeline from training to deployment to an embedded system.
 
 To build this library, I needed to:
 
@@ -71,6 +71,7 @@ The images are cropped in such a way that the leaves are centered in the picture
 
 The images are split up into several folders, labelled according to the plant species (e.g. Peach) and disease class (e.g. Bacterial spot).
 
+Further data exploration can be viewed in the 1.0-agj-data-exploration.ipynb notebook.
 
 \subsection{Algorithms and Techniques}
 
@@ -224,20 +225,6 @@ In the initial benchmark run, the hyperparameters were set to match that of the 
 
 The benchmark model achieved an accuracy of 85.68\% on the test dataset, and a loss score of 0.570. 
 
-\begin{figure}[h!]
-  \centering
-  \begin{subfigure}[b]{0.5\linewidth}
-    \includegraphics[width=\linewidth]{figures/benchmark-loss.png}
-    \caption{Training vs Validation Loss}
-  \end{subfigure}
-  \begin{subfigure}[b]{0.5\linewidth}
-    \includegraphics[width=\linewidth]{figures/benchmark-accuracy.png}
-    \caption{Training vs Validation Accuracy}
-  \end{subfigure}
-  \caption{Loss and accuracy plots for the benchmark model.}
-  \label{fig:benchmark}
-\end{figure}
-
 In subsequent training runs, certain modifications were made to the hyperparameters to see if it would improve the model validation loss and accuracy:
 
 \begin{itemize}
@@ -251,11 +238,11 @@ In subsequent training runs, certain modifications were made to the hyperparamet
 
 \begin{figure}[h!]
   \centering
-  \begin{subfigure}[b]{0.5\linewidth}
+  \begin{subfigure}[b]{0.6\linewidth}
     \includegraphics[width=\linewidth]{figures/alexnet-loss.png}
     \caption{Training vs Validation Loss}
   \end{subfigure}
-  \begin{subfigure}[b]{0.5\linewidth}
+  \begin{subfigure}[b]{0.6\linewidth}
     \includegraphics[width=\linewidth]{figures/alexnet-accuracy.png}
     \caption{Training vs Validation Accuracy}
   \end{subfigure}
@@ -276,6 +263,38 @@ For this project, I built a robot driven by a Jetson Nano, an embedded system bu
 \section{Results}
 
 \subsection{Model Evaluation and Visualization}
+
+Model performance was evaluated with accuracy and loss scores for both cross-validation during training and for evaluating performance on the test set.
+
+The 2 best performing models, based on those metrics, were both InceptionV3 networks.
+
+\begin{figure}[h]
+  \centering
+  \begin{subfigure}[b]{0.6\linewidth}
+    \includegraphics[width=\linewidth]{figures/best-model-loss-4632.png}
+    \caption{Training vs Validation Loss}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.6\linewidth}
+    \includegraphics[width=\linewidth]{figures/best-model-accuracy-4632.png}
+    \caption{Training vs Validation Accuracy}
+  \end{subfigure}
+  \caption{Loss and accuracy plots for InceptionV3, with batch size of 64 and learning rate of 0.001.}
+  \label{fig:benchmark}
+\end{figure}
+
+\begin{figure}[h!]
+  \centering
+  \begin{subfigure}[b]{0.6\linewidth}
+    \includegraphics[width=\linewidth]{figures/best-model-loss-5614.png}
+    \caption{Training vs Validation Loss}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.6\linewidth}
+    \includegraphics[width=\linewidth]{figures/best-model-accuracy-5614.png}
+    \caption{Training vs Validation Accuracy}
+  \end{subfigure}
+  \caption{Loss and accuracy plots for InceptionV3, with batch size of 100 and learning rate of 0.001.}
+  \label{fig:benchmark}
+\end{figure}
 
 \subsection{Justification}
 
