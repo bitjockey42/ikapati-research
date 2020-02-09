@@ -4,6 +4,7 @@
 \usepackage[latin9]{inputenc}
 \usepackage{url}
 \usepackage{amsmath}
+\usepackage{graphicx}
 
 \makeatletter
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% User specified LaTeX commands.
@@ -53,7 +54,9 @@ To build this library, I needed to:
 
 \subsection{Metrics}
 
-Accuracy and loss were the main metrics used in this project to evaluate overall model performance.
+Accuracy and loss were the main metrics used in this project to evaluate overall model performance. 
+
+Validation loss was used to determine whether the model was overfitting, underfitting, or fitting adequately.
 
 \section{Analysis}
 
@@ -113,7 +116,7 @@ This InceptionV3-based network is based on what was done in a previous study \ci
 These parameters can be tuned/specified at training time:
 
 \begin{itemize}
-	\item \textbf{epochs} - the number of epochs to run.
+	\item \textbf{epochs} - the number of times to run through the training set.
 	\item \textbf{learning rate} - the learning rate (optional for dynamic tuning).
 	\item \textbf{batch size} - the number of training examples in each batch.
 	\item \textbf{activation} - the activation function to use, e.g. "relu".
@@ -185,7 +188,7 @@ The code used to build the InceptionV3 architecture was based on:
 The training steps for each training run were:
 
 \begin{enumerate}
-	\item Execute the ikapati/models/train\_model.py script with the architecture (alexnet or inceptionv3), learning rate, epochs, batch size, activation, and dropout rate (if architecture is set to alexnet) hyperparameters specified, the model and data directories set, and checkpoint saving enabled to kick off a training run. (See the \textbf{Hyperparameters} described in the section \textbf{Algorithms and Techniques}d for more details on the hyperparameters).
+	\item Execute the ikapati/models/train\_model.py script with the architecture (alexnet or inceptionv3), learning rate, epochs, batch size, activation, and dropout rate (if architecture is set to alexnet) hyperparameters specified, the model and data directories set, and checkpoint saving enabled to kick off a training run. (See the \textbf{Hyperparameters} described in the section \textbf{Algorithms and Techniques} for more details on the hyperparameters).
 	\item Create a folder under the model dir specified at runtime, with the UUID of dataset used as the name, and a subfolder within that with the start time string as the name. This will be where the models are saved during this training run.
 	\item Record the start time.
 	\item After each epoch, if the validation loss has improved from the previous epoch, save the model to file in h5 format. Otherwise, we don't save anything and proceed with the next epoch.
@@ -196,11 +199,21 @@ The training steps for each training run were:
 
 \subsection{Refinement}
 
-Training was done iteratively, with modifications to the hyperparameters made after each iteration, and models were saved at every checkpoint (in this case, the epoch) for which the validation loss improved. For each of these, epochs was set to 20.
+In the initial benchmark run, the hyperparameters were set to match that of the benchmark model from Toda et al, with the learning rate set to 0.05, the batch size to 128, and the epochs to 20. The architecture was inceptionv3 and the activation function was "relu" (rectified linear units). \textbf{NOTE} The benchmark model input shape was 224x224, where as in this project the input shape was 256x256.
 
-In the benchmark run, the hyperparameters were set to match that of the benchmark model from Toda et al, with the learning rate set to 0.05, the batch size to 128. The architecture was inceptionv3 and the activation function was "relu" (rectified linear units).
+The benchmark model achieved an accuracy of 85.68\% on the test dataset, and a loss score of 0.570. 
 
-In a subsequent iteration, the learning rate was changed to 0.001, the batch size set to 100.
+
+In subsequent training runs, certain modifications were made to the hyperparameters to see if it would improve the model validation loss and accuracy:
+
+\begin{itemize}
+	\item The learning rate was decreased to 0.001.
+	\item The batch size was reduced to account for hardware limitations.
+	\item The epoch number was increased to see if the model's validation loss decreases over time.
+	\item If validation loss improved in one epoch, then a checkpoint of the model was saved to file.
+	\item After each iteration, the validation vs training loss was plotted to determine whether a model is underfitting or overfitting, or reaching a good fit.
+	\item When selected as the architecture, AlexNet demonstrated a tendency to overfit on this dataset even with dropout layers, so InceptionV3 became the defacto architecture. 
+\end{itemize}
 
 TODO: insert figures here of the model performance
 
@@ -235,4 +248,3 @@ TODO: insert figures here of the model performance.
 
 \end{document}
 
-\subsection{Model Evaluation and Validation}
