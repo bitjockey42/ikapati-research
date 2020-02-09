@@ -1,7 +1,7 @@
 ikapati
 ==============================
 
-Plant disease detection
+Plant disease detection using TensorFlow 2.0.
 
 Project Organization
 ------------
