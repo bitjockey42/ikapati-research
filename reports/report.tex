@@ -34,13 +34,13 @@ a farmer to manually check each growing plant for disease. It can
 potentially be more cost-effective to diagnose plant diseases with
 automated tools \cite{fujita_basic_2016}.
 
-For this project, I built the Python library \textbf{ikapati}, which implements a multi-class classifier that functions as a plant disease detector.
+For this project, I built the Python library \textbf{ikapati}, which implements a multi-class classifier that functions as a plant disease detector and then deployed the best-performing model to an embedded system built specifically for use in Artificial Intelligence applications, a Jetson Nano robot.
 
 The library also provides utility tools to do many of the tasks required in machine learning research, including the image preprocessing necessary to prepare the data for classification, scripts to train classifier itself, and utility functions to help evaluate performance.
 
 \subsection{Problem Statement}
 
-My main objective for this project was to build a library that implements plant disease classification and can act as a framework with which to do further research in this subject area. It can be used to complete an entire machine learning pipeline from training to deployment.
+My main objective for this project was to build a library that can be used for both plant disease classification and can act as a framework with which to do further research in this subject area. It can be used to complete an entire machine learning pipeline from training to deployment to an embedded system.
 
 To build this library, I needed to:
 
@@ -186,16 +186,18 @@ The training steps for each training run were:
 	\item After each epoch, if the validation loss has improved from the previous epoch, the model is saved to file in h5 format. Otherwise, we don't save anything and proceed with the next epoch.
 	\item When all epochs have concluded, a final model is saved to file and the end time is recorded.
 	\item Write the start and end time of the training run, the learning rate, and other parameters specified at runtime to a CSV file that acts as a log of training runs.
-	\item Repeat steps above, tweaking the hyperparameters.
+	\item Repeat steps above, tweaking the hyperparameters as needed.
 \end{enumerate}
-
-\subsubsection{Model Saving and Deployment}
-
-Upon training completion, trained models as saved in both h5 and tflite (TensorFlow Lite) formats. Both formats can be loaded for later use, but the tflite format is specifically used on embedded devices that have TensorFlow Lite.
 
 \subsubsection{Visualization and Metrics Tools}
 
 Utility functions to evaluate model performance were created using seaborn (a high-level API for matplotlib) and pandas.
+
+\subsubsection{Deployment to an Embedded System}
+
+Upon training completion, trained models as saved in both h5 and tflite (TensorFlow Lite) formats. Both formats can be loaded for later use with the TensorFlow library, but the tflite format is specifically used to run model inference on embedded devices such as the Jetson Nano.
+
+For this project, I built a robot driven by a Jetson Nano, an embedded system built specifically for use in Artificial Intelligence by NVIDIA.
 
 \subsection{Refinement}
 
