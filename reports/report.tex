@@ -60,6 +60,7 @@ Accuracy and loss were the main metrics used in this project to evaluate overall
 
 Validation loss was used to determine whether the model was overfitting, underfitting, or fitting adequately.
 
+\clearpage
 \section{Analysis}
 
 \subsection{Data Exploration}
@@ -278,6 +279,7 @@ curl -F "image=@blight.jpg" http://jetbot:5000/predict
 
 This endpoint expects a 256x256 image. If the request is successful, the result will be a JSON body containing the predicted class for the input image.
 
+\clearpage
 \section{Results}
 
 \subsection{Model Evaluation and Visualization}
@@ -316,8 +318,6 @@ The 2 best performing models, based on these metrics, were both InceptionV3-base
   \label{fig:best1}
 \end{figure}
 
-In Figure ~\ref{fig:best1}, the plots show how that training run with the batch size reduced to 64 from 128 performed. On the test dataset, this model performed with an accuracy of 97\% and a loss score of 0.089.
-
 \begin{figure}[h!]
   \centering
   \begin{subfigure}[b]{0.6\linewidth}
@@ -332,10 +332,13 @@ In Figure ~\ref{fig:best1}, the plots show how that training run with the batch 
   \label{fig:best2}
 \end{figure}
 
+In Figure ~\ref{fig:best1}, the plots show how that training run with the batch size reduced to 64 from 128 performed. On the test dataset, this model performed with an accuracy of 97\% and a loss score of 0.089.
+
 In Figure ~\ref{fig:best2}, the plots show how the training run with the same batch size as the benchmark but a learning rate reduced to 0.001 performed. On the test dataset, this this model performed with an accuracy of 96\% and a loss score of 0.126.
 
 \subsection{Justification}
 
+\clearpage
 \section{Conclusion}
 
 \subsection{Free-Form Visualization}
@@ -347,7 +350,10 @@ These steps summarize what was done to complete this project:
 \begin{enumerate}
 	\item Initial exploration of the agricultural domain was done to see what problems need more investigation.
 	\item A large dataset with multiple classes of plants was downloaded and then preprocessed.
-	\item 
+	\item A benchmark model was created based on a previous study \cite{toda_how_2019} .
+	\item Training using different hyperparameters was done.
+	\item The best model was chosen using validation loss and accuracy scores and then converted to TensorFlow Lite format.
+	\item A simple Flask API that loads the TensorFlow Lite model and does inference, was deployed to a Jetson Nano.
 \end{enumerate}
 
 \subsection{Improvement}
