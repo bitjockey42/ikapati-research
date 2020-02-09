@@ -14,7 +14,7 @@
 \usepackage{url}
 \title{\textbf{Capstone Project}}
 \author{Allyson Julian}
-\date{January 27, 2020}
+\date{February 8, 2020}
 
 \makeatother
 
@@ -277,7 +277,13 @@ To simulate a POST request to that endpoint, the curl commandline tool was used 
 curl -F "image=@blight.jpg" http://jetbot:5000/predict
 \end{lstlisting}
 
-This endpoint expects a 256x256 image. If the request is successful, the result will be a JSON body containing the predicted class for the input image.
+This endpoint expects a 256x256 image. If the request is successful, the result will be a JSON body containing the predicted class for the input image:
+
+\begin{lstlisting}
+{
+  "class_name": "Tomato___Septoria_leaf_spot"
+}
+\end{lstlisting}
 
 \clearpage
 \section{Results}
@@ -356,7 +362,9 @@ These steps summarize what was done to complete this project:
 	\item A simple Flask API that loads the TensorFlow Lite model and does inference, was deployed to a Jetson Nano.
 \end{enumerate}
 
-I found it challenging to 
+I found 3-4, and 6 most challenging because I had never used TensorFlow at the level this project required and had never built a CNN before.
+
+It was interesting to learn about how those neural networks work and how they can be improved upon.
 
 \subsection{Improvement}
 
