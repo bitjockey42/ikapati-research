@@ -42,14 +42,16 @@ def create_metrics_dataframe(history: List[dict]) -> pd.DataFrame:
 
 
 def learning_curves(metric: str, metrics_df: pd.DataFrame):
-    return sns.lineplot(x="epoch", y=metric, hue="dataset", data=metrics_df, legend="full")
+    return sns.lineplot(
+        x="epoch", y=metric, hue="dataset", data=metrics_df, legend="full"
+    )
 
 
 def save_plot(plot, filename: str):
     plot.get_figure().savefig(filename)
 
 
-def save_metrics_plots_for_training(training_csv_filename: str):
+def save_metrics_plots_for_training(training_csv_filename: str, file_ext: str = "png"):
     training_df = pd.read_csv(training_csv_filename)
     training_df = training_df.fillna(0)
     project_dir = pathlib.Path(__file__).resolve().parents[2]
@@ -67,12 +69,16 @@ def save_metrics_plots_for_training(training_csv_filename: str):
         history = metadata["history"]
         metrics_df = create_metrics_dataframe(history)
 
-        loss_plot_file_path = model_figures_dir.joinpath(f"LOSS.{filename_template}.svg")
+        loss_plot_file_path = model_figures_dir.joinpath(
+            f"LOSS.{filename_template}.{file_ext}"
+        )
         loss_plot = learning_curves("loss", metrics_df)
         save_plot(loss_plot, str(loss_plot_file_path))
         plt.clf()
 
-        acc_plot_file_path = model_figures_dir.joinpath(f"ACCURACY.{filename_template}.svg")
+        acc_plot_file_path = model_figures_dir.joinpath(
+            f"ACCURACY.{filename_template}.{file_ext}"
+        )
         acc_plot = learning_curves("accuracy", metrics_df)
         save_plot(acc_plot, str(figures_dir.joinpath(acc_plot_file_path)))
         plt.clf()
