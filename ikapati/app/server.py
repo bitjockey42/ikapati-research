@@ -14,6 +14,8 @@ import flask
 
 import numpy as np
 import tensorflow as tf
+from io import BytesIO
+from PIL import Image
 from tensorflow import keras
 
 from ikapati.data.io import read_metadata, NumpyEncoder
@@ -43,10 +45,12 @@ def predict_disease():
 
 
 def prepare_input_data(image_file):
-    image_raw = image_file.read()
-    input_data = preprocess_raw_image(image_raw)
+    image_bytes = image_file.read()
+    im = Image.open(BytesIO(image_bytes))
+    resized_im = im.resize((256,256))
+    image_raw = resized_im.tobytes()
     image = preprocess_raw_image(image_raw)
-    
+
     # This is done because tf expects the input to be in a list
     input_data = tf.reshape(image, [1, 256, 256, 3])
     return input_data
