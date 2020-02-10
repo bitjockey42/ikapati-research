@@ -115,6 +115,15 @@ Further data exploration can be viewed in the 1.0-agj-data-exploration.ipynb not
 
 \subsubsection{An Overview of Convolutional Neural Networks}
 
+%% A-convolutional-neural-networks-CNN.png
+
+\begin{figure}[h!]
+  \centering
+   \includegraphics[width=\linewidth]{figures/A-convolutional-neural-networks-CNN.png}
+  \caption{Convolutional Neural Network diagram from \cite{kamencay_new_2017}}
+  \label{fig:cnn}
+\end{figure}
+
 Plant disease detection, when done by a human expert, often involves their active observation of a given leaf and discernment of any patterns in the visual appearance of the leaf that may be indicative of disease. In this project, the plant disease detector is meant to mimic the operations done by a human expert in plant disease diagnosis.
 
 Diagnosing disease in the context of machine learning can be described as the task of receiving a visual input, in this case a colored image, and producing an output that corresponds to what disease the plant has (if any) based on patterns observed in the image. With that perspective in mind, the problem of plant disease detection can be approached as a classification problem where there are multiple classes to which an input can be assigned.
@@ -123,7 +132,7 @@ Diagnosing disease in the context of machine learning can be described as the ta
 
 ANNs have multiple connected layers (or sequences of neurons) that look at the characteristics of its inputs, then uses an activation function like sigmoid to produce outputs for each neuron that can be passed onto the next layer as its input. A simple ANN consists of an input layer that holds the values of an input (e.g. pixel values for an image), a hidden layer, and an output layer that coalesces the activation results of previous layers into an output corresponding to some class \cite{oshea_introduction_2015}. 
 
-A particular type of ANN, a \textbf{Convolutional Neural Network (CNN)}, is particularly useful for image classification tasks. Like standard ANNs, CNNs are comprised of multiple layers of neurons, but consist of \textbf{convolution}, \textbf{pooling}, and \textbf{fully-connected} layers.
+A particular type of ANN, a \textbf{Convolutional Neural Network (CNN)}, is particularly useful for image classification tasks. Like standard ANNs, CNNs are comprised of multiple layers of neurons, but consist of \textbf{convolution}, \textbf{pooling}, and \textbf{fully-connected} layers (Figure ~\ref{fig:cnn}).
 
 A \textbf{convolution} layer is an alternative to a fully-connected layer in the sense that it localizes the analysis to particular regions of the input rather than analyzing the whole input which can be helpful in reducing complexity and improving the efficiency of the model \cite{albawi_understanding_2017}. It does so by sliding a \textbf{kernel} (a filter) with a \textbf{receptive field size} (dimensions) smaller than the full width and height of the input across the input in \textbf{strides} (steps within the input to slide the window across) \cite{oshea_introduction_2015}.
 
