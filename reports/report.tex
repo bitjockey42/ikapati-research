@@ -103,11 +103,29 @@ The images are split up into several folders, labelled according to the plant sp
   \label{fig:benchmark}
 \end{figure}
 
+%% TODO: insert distribution plot of classes
+
 Further data exploration can be viewed in the 1.0-agj-data-exploration.ipynb notebook.
 
 \subsection{Algorithms and Techniques}
 
-A \textbf{Convolutional Neural Network (CNN)} was selected as the classification algorithm due to its demonstrated efficacy in plant disease detection in previous studies \cite{toda_how_2019} \cite{fujita_basic_2016}.
+\subsubsection{An Overview of Convolutional Neural Networks}
+
+Plant disease detection, when done by a human expert, often involves their active observation of a given leaf and discernment of any patterns in the visual appearance of the leaf that may be indicative of disease. In this project, the plant disease detector is meant to mimic the operations done by a human expert in plant disease diagnosis.
+
+Diagnosing disease in the context of machine learning can be described as the task of receiving a visual input, in this case a colored image, and producing an output that corresponds to what disease the plant has (if any) based on patterns observed in the image. With that perspective in mind, the problem of plant disease detection can be approached as a classification problem where there are multiple classes to which an input can be assigned.
+
+\textbf{Artificial Neural Networks (ANN)}, which attempt to mimic human brain function in a digital fashion, are well-suited to classification problems. They are comprised of connected nodes that process some input as a distributed node, discern patterns based on the characteristics of that input, and then produce an output corresponding to the class to which the input belongs \cite{oshea_introduction_2015} based on the patterns observed. A particular type of ANN, a \textbf{Convolutional Neural Network (CNN)}, is particularly useful for image classification tasks.
+
+%% What are convolutions in the context of images?
+
+%% How do neural networks incorporate convolutions?
+
+%% Why is this approach used for image problems?
+
+%% What do the hyperparameters mean?
+
+As such, CNN was selected as the classification algorithm due to its demonstrated efficacy in plant disease detection in previous studies \cite{toda_how_2019} \cite{fujita_basic_2016}.
 
 Two CNN architectures were used in this project:
 
