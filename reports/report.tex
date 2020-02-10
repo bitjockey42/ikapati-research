@@ -121,9 +121,13 @@ ANNs have multiple connected layers (or sequences of neurons) that look at the c
 
 A particular type of ANN, a \textbf{Convolutional Neural Network (CNN)}, is particularly useful for image classification tasks. Like standard ANNs, CNNs are comprised of multiple layers of neurons, but consist of \textbf{convolution}, \textbf{pooling}, and \textbf{fully-connected} layers.
 
-A \textbf{convolution} layer is an alternative to a fully-connected layer in the sense that it localizes the 
+A \textbf{convolution} layer is an alternative to a fully-connected layer in the sense that it localizes the analysis to particular regions of the input rather than analyzing the whole input which can be helpful in reducing complexity and improving the efficiency of the model \cite{albawi_understanding_2017}. It does so by sliding a \textbf{kernel} (a filter) with a \textbf{receptive field size} (dimensions) smaller than the full width and height of the input across the input in \textbf{strides} (steps within the input to slide the window across) \cite{oshea_introduction_2015}.
 
-These layers allow for the input to be more complex and as such are used for learning from 2-dimensional images with 3 channels without adding more complexity to the network \cite{albawi_understanding_2017}.
+\textbf{Pooling} layers reduce the dimensionality (resolution) of the convolution output (i.e. it downsamples the output) so that subsequent layers will receive inputs of less complexity \cite{albawi_understanding_2017} \cite{koushik_understanding_2016}.
+
+\textbf{Fully-connected} layers are much like traditional ANNs in that they are densely-connected and look at received inputs from previous layers as a whole entity. They usually are placed after convolution and pooling sequences \cite{oshea_introduction_2015} \cite{albawi_understanding_2017}.
+
+These layers allow for the initial input to be more complex and as such are used for learning from 2-dimensional images with 3 channels without adding more complexity to the network itself \cite{albawi_understanding_2017} \cite{oshea_introduction_2015}.
 
 As such, CNN was selected as the classification algorithm due to its demonstrated efficacy in image-related machine learning tasks, including plant disease detection in previous studies \cite{toda_how_2019} \cite{fujita_basic_2016}.
 
@@ -135,6 +139,8 @@ Two CNN architectures were used in this project:
 \end{enumerate}
 
 \subsubsection{AlexNet}
+
+(See Figure ~\ref{fig:alexnetarch} for a visualization of the AlexNet architecture).
 
 This describes the layer sequence (the number indicates how many of that same layer repeats until the next one):
 
@@ -151,9 +157,8 @@ This describes the layer sequence (the number indicates how many of that same la
 	\centering
 	\includegraphics[width=0.2\linewidth]{figures/alexnet.png}
     \caption{AlexNet Architecture}
-  	\label{fig:alexnet}
+  	\label{fig:alexnetarch}
 \end{figure}
-
 
 \subsubsection{InceptionV3}
 
@@ -168,8 +173,6 @@ This InceptionV3-based network is based on what was done in a previous study \ci
 	\item GlobalAveragePooling2D (1) - Global Pooling Layer
 	\item Dense (1) - The Output Layer
 \end{itemize}
-
-See \textbf{Additional Figures} to view visualization of InceptionV3.
  
 \subsubsection{Hyperparameters}
 
