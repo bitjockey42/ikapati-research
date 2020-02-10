@@ -115,17 +115,17 @@ Plant disease detection, when done by a human expert, often involves their activ
 
 Diagnosing disease in the context of machine learning can be described as the task of receiving a visual input, in this case a colored image, and producing an output that corresponds to what disease the plant has (if any) based on patterns observed in the image. With that perspective in mind, the problem of plant disease detection can be approached as a classification problem where there are multiple classes to which an input can be assigned.
 
-\textbf{Artificial Neural Networks (ANN)}, which attempt to mimic human brain function in a digital fashion, are well-suited to classification problems. They are comprised of connected nodes that process some input as a distributed node, discern patterns based on the characteristics of that input, and then produce an output corresponding to the class to which the input belongs \cite{oshea_introduction_2015} based on the patterns observed. A particular type of ANN, a \textbf{Convolutional Neural Network (CNN)}, is particularly useful for image classification tasks.
+\textbf{Artificial Neural Networks (ANN)}, which attempt to mimic human brain function in a digital fashion, are well-suited to classification problems. They can be described as inter-connected nodes (neurons) that process some input as a distributed unit (network) in sequential layers, which then discern patterns based on the characteristics of that input, and then produce an output corresponding to the class to which the input belongs. 
 
-%% What are convolutions in the context of images?
+ANNs have multiple connected layers (or sequences of neurons) that look at the characteristics of its inputs, then uses an activation function like sigmoid to produce outputs for each neuron that can be passed onto the next layer as its input. A simple ANN consists of an input layer that holds the values of an input (e.g. pixel values for an image), a hidden layer, and an output layer that coalesces the activation results of previous layers into an output corresponding to some class \cite{oshea_introduction_2015}. 
 
-%% How do neural networks incorporate convolutions?
+A particular type of ANN, a \textbf{Convolutional Neural Network (CNN)}, is particularly useful for image classification tasks. Like standard ANNs, CNNs are comprised of multiple layers of neurons, but consist of \textbf{convolution}, \textbf{pooling}, and \textbf{fully-connected} layers.
 
-%% Why is this approach used for image problems?
+A \textbf{convolution} layer is an alternative to a fully-connected layer in the sense that it localizes the 
 
-%% What do the hyperparameters mean?
+These layers allow for the input to be more complex and as such are used for learning from 2-dimensional images with 3 channels without adding more complexity to the network \cite{albawi_understanding_2017}.
 
-As such, CNN was selected as the classification algorithm due to its demonstrated efficacy in plant disease detection in previous studies \cite{toda_how_2019} \cite{fujita_basic_2016}.
+As such, CNN was selected as the classification algorithm due to its demonstrated efficacy in image-related machine learning tasks, including plant disease detection in previous studies \cite{toda_how_2019} \cite{fujita_basic_2016}.
 
 Two CNN architectures were used in this project:
 
