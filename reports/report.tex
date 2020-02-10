@@ -180,10 +180,10 @@ These parameters can be tuned/specified at training time:
 
 \begin{itemize}
 	\item \textbf{epochs} - the number of times to run through the training set.
-	\item \textbf{learning rate} - the learning rate for the Adam optimizer.
+	\item \textbf{learning rate} - the learning rate for the Adam optimizer, an adaptive learning rate optimization method \cite{kingma_adam:_2014}.
 	\item \textbf{batch size} - the number of training examples in each batch.
-	\item \textbf{activation} - the activation function to use, e.g. "relu".
-	\item \textbf{dropout} - the dropout rate, e.g. 0.2. This was only supported by AlexNet.
+	\item \textbf{activation} - the activation function to use, e.g. "relu" - Rectified Linear Unit (ReLU) which creates a sparse representation \cite{albawi_understanding_2017}. 
+	\item \textbf{dropout} - the dropout rate, e.g. 0.2. NOTE: This was only supported by AlexNet. Dropout refers to the technique of dropping neuron activations at the specified so as to reduce overfitting.
 	\item \textbf{architecture} - the architecture to use for the CNN, "alexnet" (for AlexNet) or "inceptionv3" (for InceptionV3).
 \end{itemize}
 
