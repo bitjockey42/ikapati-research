@@ -91,3 +91,8 @@ target/
 
 # This was taking up too much space
 /models/
+
+# Docker
+.bash_history
+.keras/
+.python_history
