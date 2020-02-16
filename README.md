@@ -57,6 +57,45 @@ Project Organization
 <p><small>Project based on the <a target="_blank" href="https://drivendata.github.io/cookiecutter-data-science/">cookiecutter data science project template</a>. #cookiecutterdatascience</small></p>
 
 
+Setup with `tensorman`
+------------------------
+
+[`Tensorman`](https://support.system76.com/articles/use-tensorman/) is a tool created by the developers of `Pop!_OS` for managing TensorFlow toolchains. It runs `TensorFlow` inside docker containers.
+
+Assuming the GPU requirements are satisfied, bring up a container as root:
+
+```bash
+tensorman run --gpu --python3 --root --name ikapati bash
+```
+
+Inside that container:
+
+```bash
+pip install -U pip
+pip install poetry
+```
+
+In another terminal window on the host, save the container as an image:
+
+```bash
+tensorman save ikapati ikapati
+```
+
+Exit the container, then run a new one as a regular user:
+
+```bash
+tensorman =ikapati run --gpu bash
+```
+
+Inside the container:
+
+```bash
+poetry shell
+pip install -U pip
+poetry install
+```
+
+
 Setup with `poetry`
 -----------------------
 
@@ -133,3 +172,4 @@ Running
 python src/data/make_dataset.py data/fashion_test
 python src/models/train_model.py --epochs 20 --batch_size 64 --model_dir models --train data/fashion_test
 ```
+
