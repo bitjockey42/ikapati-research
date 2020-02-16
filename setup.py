@@ -10,6 +10,8 @@ setup(
     entry_points={
         'console_scripts': [
             'ikapati-data=ikapati.data.make_dataset:main',
+            'ikapati-train=ikapati.models.train_model:main',
+            'ikapati-eval=ikapati.models.evaluate_model:main',
         ]
     },
 )
