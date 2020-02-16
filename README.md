@@ -71,27 +71,47 @@ tensorman run --gpu --python3 --root --name ikapati bash
 Inside that container:
 
 ```bash
-pip install -U pip
+# apt-get install -y python3-venv
 pip install poetry
 ```
 
-In another terminal window on the host, save the container as an image:
+Disable virtualenv creation by `poetry`:
 
 ```bash
+poetry config virtualenvs.create false
+```
+
+This creates a configuration file under `.config/pypoetry/`, which will be created in this directory since it's mounted in the container.
+
+```ini
+[virtualenvs]
+create = false
+```
+
+Install the updated 
+
+```bash
+# Poetry runs a really older version of pip, which causes installation to fail
+poetry run pip install pip==20.0.2
+```
+
+In another terminal window on the host, fix the permissions on `.config` and `.cache` and save the container as an image:
+
+```bash
+sudo chown -R $USER {.config,.cache}
+sudo chgrp -R $USER {.config,.cache}
 tensorman save ikapati ikapati
 ```
 
 Exit the container, then run a new one as a regular user:
 
 ```bash
-tensorman =ikapati run --gpu bash
+tensorman =ikapati run --gpu --name ikapati_dev bash
 ```
 
 Inside the container:
 
 ```bash
-poetry shell
-pip install -U pip
 poetry install
 ```
 
