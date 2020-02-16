@@ -288,8 +288,9 @@ def _parse_args():
     )
 
     # https://github.com/aws/sagemaker-containers#sm-hosts
+    # Done for AWS SageMaker Compatibility
     parser.add_argument(
-        "--hosts", type=list, default=json.loads(os.environ.get("SM_HOSTS"))
+        "--hosts", type=list, default=json.loads(os.environ.get("SM_HOSTS", '["algo-1","algo-2"]'))
     )
     parser.add_argument(
         "--current-host", type=str, default=os.environ.get("SM_CURRENT_HOST")
