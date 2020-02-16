@@ -298,11 +298,11 @@ def _parse_args():
     parser.add_argument("--eval", type=str, default=os.environ.get("SM_CHANNEL_EVAL"))
     parser.add_argument("--monitor", type=str, default="val_loss")
 
-    return parser.parse_known_args()
+    return parser.parse_args()
 
 
 if __name__ == "__main__":
-    args, unknown = _parse_args()
+    args = _parse_args()
     start_time = datetime.utcnow().strftime("%Y-%m-%d__%H_%M%S")
 
     classifier, history, model_id = train(
