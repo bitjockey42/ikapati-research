@@ -1,2 +1,1 @@
-from . import alexnet
-from . import inceptionv3
+from . import alexnet, inceptionv3
