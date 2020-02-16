@@ -65,7 +65,7 @@ Setup with `tensorman`
 Assuming the GPU requirements are satisfied, bring up a container as root:
 
 ```bash
-tensorman run --gpu --python3 --root --name ikapati_build bash
+tensorman run -p 8888:8888 --gpu --python3 --jupyter --root --name ikapati_build bash
 ```
 
 Inside that container:
@@ -100,9 +100,8 @@ poetry install
 In another terminal window on the host, fix the permissions on `.config` and `.cache` and save the container as an image:
 
 ```bash
-sudo chown -R $USER {.config,.cache}
-sudo chgrp -R $USER {.config,.cache}
-tensorman save ikapati_build ikapati_build
+sudo chown -R $USER {.config,.cache} && sudo chgrp -R $USER {.config,.cache}
+tensorman save ikapati_build ikapati
 ```
 
 Exit the container, then run a new one as a regular user:

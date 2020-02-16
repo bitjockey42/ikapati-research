@@ -97,3 +97,7 @@ target/
 .keras/
 .python_history
 .poetry/
+.config/
+.ipython/
+.jupyter/
+.local/

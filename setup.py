@@ -12,6 +12,7 @@ setup(
             'ikapati-data=ikapati.data.make_dataset:main',
             'ikapati-train=ikapati.models.train_model:main',
             'ikapati-eval=ikapati.models.evaluate_model:main',
+            'ikapati-predict=ikapati.models.predict_model:main',
         ]
     },
 )
