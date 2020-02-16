@@ -75,7 +75,7 @@ Inside that container:
 pip install poetry
 ```
 
-Disable virtualenv creation by `poetry`:
+Disable virtualenv creation by `poetry` since we're running it inside a docker container:
 
 ```bash
 poetry config virtualenvs.create false
@@ -88,11 +88,13 @@ This creates a configuration file under `.config/pypoetry/`, which will be creat
 create = false
 ```
 
-Install the updated 
+Upgrade `pip`:
 
 ```bash
 # Poetry runs a really older version of pip, which causes installation to fail
 poetry run pip install pip==20.0.2
+# Install the dependencies
+poetry install
 ```
 
 In another terminal window on the host, fix the permissions on `.config` and `.cache` and save the container as an image:
@@ -108,13 +110,6 @@ Exit the container, then run a new one as a regular user:
 ```bash
 tensorman =ikapati run --gpu --name ikapati_dev bash
 ```
-
-Inside the container:
-
-```bash
-poetry install
-```
-
 
 Setup with `poetry`
 -----------------------
