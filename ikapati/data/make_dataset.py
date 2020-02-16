@@ -32,10 +32,10 @@ def prepare_dataset(
 @click.argument("species", nargs=-1)
 @click.option("--data_dir", type=click.Path())
 @click.option("--output_dir", type=click.Path())
-@click.option("--test-size", type=click.FLOAT, default=0.4)
-@click.option("--overwrite/--no-overwrite", default=False)
+@click.option("--test_size", type=click.FLOAT, default=0.4)
+@click.option("--overwrite/--no_overwrite", default=False)
 @click.option(
-    "--file-ext", default="JPG", help="The file extension of images, e.g. JPG"
+    "--file_ext", default="JPG", help="The file extension of images, e.g. JPG"
 )
 def main(species, data_dir, output_dir, test_size, overwrite, file_ext):
     """ Runs data processing scripts to turn raw data from (../raw) into
