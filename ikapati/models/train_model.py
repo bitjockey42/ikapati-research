@@ -20,9 +20,6 @@ import csv
 from datetime import datetime
 from uuid import uuid4
 
-import tensorflow_docs as tfdocs
-import tensorflow_docs.modeling
-import tensorflow_docs.plots
 import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import (
@@ -59,9 +56,7 @@ def model(num_classes, architecture="alexnet", learning_rate=0.001, activation="
 
 
 def _get_callbacks(early_stopping, save_checkpoints, start_time, logdir, monitor, model_dir, model_id):
-    _callbacks = [
-        tfdocs.modeling.EpochDots(),
-    ]
+    _callbacks = []
 
     if early_stopping:
         print("Early stopping")
