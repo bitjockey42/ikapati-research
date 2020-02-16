@@ -26,6 +26,8 @@ jupyterlab = "^1.2.6"
 
 [tool.poetry.scripts]
 ikapati-data = 'ikapati.data.make_dataset:main'
+ikapati-train = 'ikapati.models.train_model:main'
+ikapati-eval = 'ikapati.models.evaluate_model:main'
 
 [build-system]
 requires = ["poetry>=0.12"]

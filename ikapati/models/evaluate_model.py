@@ -52,7 +52,7 @@ def write_evaluation_to_file(file_path, model_file_path, results, metadata):
         writer.writerow(evaluation)
 
 
-if __name__ == "__main__":
+def main():
     parser = argparse.ArgumentParser()
 
     parser.add_argument("--model_dir", type=str)
@@ -75,3 +75,7 @@ if __name__ == "__main__":
     write_evaluation_to_file(file_path, model_file_path, results, metadata)
     
     model = None
+
+
+if __name__ == "__main__":
+    main()

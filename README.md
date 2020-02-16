@@ -65,7 +65,7 @@ Setup with `tensorman`
 Assuming the GPU requirements are satisfied, bring up a container as root:
 
 ```bash
-tensorman run --gpu --python3 --root --name ikapati bash
+tensorman run --gpu --python3 --root --name ikapati_build bash
 ```
 
 Inside that container:
@@ -102,7 +102,7 @@ In another terminal window on the host, fix the permissions on `.config` and `.c
 ```bash
 sudo chown -R $USER {.config,.cache}
 sudo chgrp -R $USER {.config,.cache}
-tensorman save ikapati ikapati
+tensorman save ikapati_build ikapati_build
 ```
 
 Exit the container, then run a new one as a regular user:
@@ -110,6 +110,19 @@ Exit the container, then run a new one as a regular user:
 ```bash
 tensorman =ikapati run --gpu --name ikapati_dev bash
 ```
+
+For `jupyter`:
+
+```bash
+tensorman =ikapati run -p 8888:8888 --gpu --python3 --jupyter bash
+```
+
+Then inside the container:
+
+```bash
+jupyter lab --ip=0.0.0.0 --no-browser
+```
+
 
 Setup with `poetry`
 -----------------------

@@ -301,7 +301,7 @@ def _parse_args():
     return parser.parse_args()
 
 
-if __name__ == "__main__":
+def main():
     args = _parse_args()
     start_time = datetime.utcnow().strftime("%Y-%m-%d__%H_%M%S")
 
@@ -322,3 +322,7 @@ if __name__ == "__main__":
 
     # save model
     save_model(classifier, args.model_dir, model_id, start_time)
+
+
+if __name__ == "__main__":
+    main()
