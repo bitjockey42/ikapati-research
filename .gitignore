@@ -101,3 +101,6 @@ target/
 .ipython/
 .jupyter/
 .local/
+
+# Virtual
+venv/
