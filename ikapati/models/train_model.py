@@ -115,16 +115,19 @@ def train(
     architecture,
     train_dir,
     model_dir,
-    batch_size,
-    epochs,
-    monitor,
-    start_time,
+    batch_size=64,
+    epochs=20,
+    monitor="val_loss",
+    start_time=None,
     learning_rate=0.001,
     activation="linear",
     early_stopping=False,
     dropout=None,
     save_checkpoints=False,
 ):
+    if start_time is None:
+        start_time = datetime.utcnow().strftime("%Y-%m-%d__%H_%M%S")
+
     # Set up logs
     logdir = pathlib.Path(tempfile.mkdtemp()) / "tensorboard_logs"
     shutil.rmtree(logdir, ignore_errors=True)
