@@ -11,7 +11,7 @@ python-dotenv>=0.5.1
 
 # machine learning
 tensorflow-gpu==2.1.0
-Pillow==7.0.0
+Pillow==9.0.0
 numpy==1.18.1
 scikit-learn==0.22.1
 pandas==1.0.1
