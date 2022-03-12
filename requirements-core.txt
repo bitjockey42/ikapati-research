@@ -1,6 +1,6 @@
 # machine learning
 tensorflow-gpu==2.1.0
-Pillow==7.0.0
+Pillow==9.0.1
 numpy==1.18.1
 scikit-learn==0.22.1
 pandas==1.0.1
